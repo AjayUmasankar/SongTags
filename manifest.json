@@ -1,0 +1,34 @@
+{
+    "name":  "Youtube Categorization",
+    "description" : "Attach and keep track of categories to videos you watch!",
+    "version" : "0.1",
+    "manifest_version" : 3,
+    "permissions": ["storage", "contentSettings", "activeTab", "tabs"],
+    "content_scripts": [
+        {
+            "matches": ["https://*.youtube.com/playlist*"],
+            "css": ["./bootstrap-4.3.1/css/bootstrap.min.css", "categories.css", "tagBox/tagBoxStyle.css"],
+            "js": ["./bootstrap-4.3.1/js/bootstrap.min.js", "tagBox/tagBox.js", "categories.js"],
+            "run_at": "document_idle"
+        }
+    ],
+    "icons": {
+        "16": "/images/get_started16.png",
+        "32": "/images/get_started32.png",
+        "48": "/images/get_started48.png",
+        "128": "/images/get_started128.png"
+    },
+    "background": {
+        "service_worker" : "background.js"
+    },
+    "action" : {
+        "default_popup": "popup.html",
+        "default_icon": {
+            "16": "/images/get_started16.png",
+            "32": "/images/get_started32.png",
+            "48": "/images/get_started48.png",
+            "128": "/images/get_started128.png"
+        }
+    },
+    "options_page": "options.html"
+}
