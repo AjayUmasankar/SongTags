@@ -1,28 +1,41 @@
 class tagBox {
-    constructor(tagDiv) {
-        this.ul = tagDiv.querySelector("ul"),
-        this.input = tagDiv.querySelector("input"),
+    ul: HTMLUListElement;
+    input: HTMLInputElement;
+    maxTags: number;
+    tags: Array<String>;
+    href: String;
+    divEl: Element;
+
+    constructor(href: string) {
+        // this = document.createElement('div');
+        // let tagBoxDiv: Element = document.createElement('DIV');
+        this.href = href;
+        this.divEl = document.createElement('DIV');
+        this.divEl.innerHTML=
+        `<div class="content">
+            <ul><input type="text" spellcheck="false"></ul>
+        </div>
+        ` 
+        this.ul = this.divEl.querySelector("ul") as HTMLUListElement,
+        this.input = this.divEl.querySelector("input") as HTMLInputElement,
         // this.tagNumb = tagDiv.querySelector(".details span");
         this.maxTags = 10,
-        this.tags = ["coding", "nepal"];
-        console.log('Input is: ', this.input);
-
+        this.tags = [];
         this.countTags();
         this.createTag();
 
         this.input.addEventListener("keyup", this.addTag.bind(this));
-        this.removeBtn = document.querySelector(".details button");
-        this.removeBtn.addEventListener("click", () =>{
-            this.tags.length = 0;
-            this.ul.querySelectorAll("li").forEach(li => li.remove());
-            this.countTags();
-        });
+        // this.removeBtn = document.querySelector(".details button");
+        // this.removeBtn.addEventListener("click", () =>{
+        //     this.tags.length = 0;
+        //     this.ul.querySelectorAll("li").forEach(li => li.remove());
+        //     this.countTags();
+        // });
         console.log('AFter constructor Tags is:', this.tags);
     }
 
 
     countTags()  {
-        console.log('Counting Tags!');
         this.input.focus();
         // this.tagNumb.innerText = this.maxTags - this.tags.length;
     }
@@ -42,9 +55,9 @@ class tagBox {
         });
         this.countTags();
     }
-    removeTag(evt, tag){
+    removeTag(evt:MouseEvent, tag: String){
         console.log(evt);
-        let element = evt.target;
+        let element = evt.target as Element;
         console.log('Removing tag element:', element);
         if(!element) return;
         let index  = this.tags.indexOf(tag);
@@ -53,11 +66,13 @@ class tagBox {
         element.remove();
         this.countTags();
     }
-    addTag(e){
+    addTag(e:KeyboardEvent){
         if (!this.tags) this.tags = [];
         console.log('Tags is:', this.tags);
+        console.log(e.target);
+        let inputEl = e.target as HTMLInputElement;
         if(e.key == "Enter"){
-            let tag = e.target.value.replace(/\s+/g, ' ');
+            let tag = inputEl.value.replace(/\s+/g, ' ');
             if(tag.length > 1 && !this.tags.includes(tag)){
                 if(this.tags.length < 10){
                     tag.split(',').forEach(tag => {
@@ -66,7 +81,7 @@ class tagBox {
                     });
                 }
             }
-            e.target.value = "";
+            inputEl.value = "";
         }
     }
 
