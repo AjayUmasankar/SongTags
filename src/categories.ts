@@ -9,14 +9,33 @@ function songPanesLoaded() {
     
     // Traversing the Actual Song Panes
     const songPanes: NodeList = document.querySelectorAll("div ytd-playlist-video-renderer"); 
-    const songPaneOne: Element = songPanes[0] as Element;
-    console.log(songPaneOne.children);
-    const contentNode : Element = songPaneOne.children[1];
-    const menuNode : Element = songPaneOne.children[2]; 
-    const anchorEl = contentNode.children[0].children[0].children[0] as HTMLAnchorElement;
-    console.log(anchorEl);
-    const tagBoxEl = new tagBox(anchorEl.href)
-    menuNode.insertAdjacentElement('beforebegin', tagBoxEl.divEl);
+    songPanes.forEach((songPane) => {
+        let songPaneEl = songPane as Element;
+        //const songPane: Element = songPanes[0] as Element;
+        console.log(songPaneEl.children);
+        const contentNode : Element = songPaneEl.children[1];
+        const menuNode : Element = songPaneEl.children[2]; 
+        const anchorEl = contentNode.children[0].children[0].children[0] as HTMLAnchorElement;
+        //console.log(anchorEl);
+        console.log(anchorEl.href);
+        const tagBoxEl = new tagBox(parseHref(anchorEl.href))
+        menuNode.insertAdjacentElement('beforebegin', tagBoxEl.divEl);
+    })
+
+}
+
+function parseHref(href: string) {
+    //const regex = new RegExp('www.youtube.com/watch?v=(.*)&list=')
+    const regexp: RegExp = /watch\?v=(.*)&list/i;
+    const result: RegExpMatchArray = href.match(regexp) as RegExpMatchArray;
+    return result[1];
+
+    console.log(result);
+    console.log(result[1]);
+    const firstMatch = result[1];
+    console.log(firstMatch + ' is first match');
+    // const firstMatchHardcoded = result[0].substring(8, result[0].length - 1 - 5);
+    // console.log(firstMatchHardcoded);
 }
 
 window.onload = () => {
