@@ -8,5 +8,5 @@
       "strict": true,
 
     },
-    "include": [ "./src/*", "./src/tagBox/*", "./src/popup"]
+    "include": ["src/*", "src/TagBox/*"]
   }

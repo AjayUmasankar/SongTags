@@ -16,13 +16,11 @@ class tagBox {
             <ul><input type="text" spellcheck="false"></ul>
         </div>
         ` 
+        this.tags = [];
         this.getStorageTags();
         this.ul = this.divEl.querySelector("ul") as HTMLUListElement,
         this.input = this.divEl.querySelector("input") as HTMLInputElement,
-        // this.tagNumb = tagDiv.querySelector(".details span");
         this.maxTags = 10,
-        this.tags = [];
-        //this.rebuildTags();
 
         this.input.addEventListener("keyup", this.addTag.bind(this));
         // this.removeBtn = document.querySelector(".details button");
@@ -38,7 +36,7 @@ class tagBox {
     async getStorageTags() {
         const href = this.href;
         return chrome.storage.local.get(href, (items) => {
-            this.tags = items[href];
+            this.tags = items[href] ?? [];
             this.rebuildTags();
         });
     }
@@ -56,11 +54,12 @@ class tagBox {
         // this.tagNumb.innerText = this.maxTags - this.tags.length;
     }
     
-    // Rebuilds the whole whole tag list!
+    // Rebuilds the tag box contents for the associated href
     rebuildTags(){
         console.log('Creating Tags!');
-        this.ul = this.ul;
+        //this.ul = this.ul;
         this.ul.querySelectorAll("li").forEach(li => li.remove());
+        if(this.tags.length == 0) return; // or else the slice below causes errors
         this.tags.slice().reverse().forEach(tag =>{
 
             let liTag = document.createElement('li');
@@ -73,7 +72,7 @@ class tagBox {
         });
     }
     removeTag(evt:MouseEvent, tag: string){
-        console.log(evt);
+        //console.log(evt);
         let element = evt.target as Element;
         console.log('Removing tag element:', element);
         if(!element) return;
@@ -82,13 +81,13 @@ class tagBox {
         // console.log('Removing Element:', element.parentElement);
         element.remove();
         this.updateStorageTags();
-        this.getStorageTags();
+        //this.getStorageTags();
     }
 
     // Add one single tag
     addTag(e:KeyboardEvent){
         if (e.key !== 'Enter') return;
-        if (!this.tags) this.tags = [];
+        //if (!this.tags) this.tags = [];
         console.log('Tags is:', this.tags);
         //console.log(e.target);
         let inputEl = e.target as HTMLInputElement;

@@ -19,14 +19,12 @@ class tagBox {
             <ul><input type="text" spellcheck="false"></ul>
         </div>
         `;
+        this.tags = [];
         this.getStorageTags();
         this.ul = this.divEl.querySelector("ul"),
             this.input = this.divEl.querySelector("input"),
-            // this.tagNumb = tagDiv.querySelector(".details span");
             this.maxTags = 10,
-            this.tags = [];
-        //this.rebuildTags();
-        this.input.addEventListener("keyup", this.addTag.bind(this));
+            this.input.addEventListener("keyup", this.addTag.bind(this));
         // this.removeBtn = document.querySelector(".details button");
         // this.removeBtn.addEventListener("click", () =>{
         //     this.tags.length = 0;
@@ -39,11 +37,8 @@ class tagBox {
         return __awaiter(this, void 0, void 0, function* () {
             const href = this.href;
             return chrome.storage.local.get(href, (items) => {
-                console.log(items);
-                console.log(items.key);
-                console.log(items.href);
-                console.log(items[href]);
-                this.tags = items[href];
+                var _a;
+                this.tags = (_a = items[href]) !== null && _a !== void 0 ? _a : [];
                 this.rebuildTags();
             });
         });
@@ -62,11 +57,13 @@ class tagBox {
             // this.tagNumb.innerText = this.maxTags - this.tags.length;
         });
     }
-    // Rebuilds the whole whole tag list!
+    // Rebuilds the tag box contents for the associated href
     rebuildTags() {
         console.log('Creating Tags!');
-        this.ul = this.ul;
+        //this.ul = this.ul;
         this.ul.querySelectorAll("li").forEach(li => li.remove());
+        if (this.tags.length == 0)
+            return; // or else the slice below causes errors
         this.tags.slice().reverse().forEach(tag => {
             let liTag = document.createElement('li');
             // liTag.outerHTML = `<li>${tag} <i class="uit uit-multiply"></i></li>`;
@@ -78,7 +75,7 @@ class tagBox {
         });
     }
     removeTag(evt, tag) {
-        console.log(evt);
+        //console.log(evt);
         let element = evt.target;
         console.log('Removing tag element:', element);
         if (!element)
@@ -88,14 +85,13 @@ class tagBox {
         // console.log('Removing Element:', element.parentElement);
         element.remove();
         this.updateStorageTags();
-        this.getStorageTags();
+        //this.getStorageTags();
     }
     // Add one single tag
     addTag(e) {
         if (e.key !== 'Enter')
             return;
-        if (!this.tags)
-            this.tags = [];
+        //if (!this.tags) this.tags = [];
         console.log('Tags is:', this.tags);
         //console.log(e.target);
         let inputEl = e.target;
@@ -114,4 +110,4 @@ class tagBox {
         this.updateStorageTags();
     }
 }
-//# sourceMappingURL=tagBox.js.map
+//# sourceMappingURL=TagBox.js.map
