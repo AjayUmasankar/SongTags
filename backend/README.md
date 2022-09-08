@@ -11,9 +11,10 @@ uvicorn app:app --reload
 ```
 Now you can load http://localhost:8000/docs in your browser
 
-# To deploy this backend code to Deta
-You will need a version of python supported by Deta. Then, install Deta
+# To deploy this backend code to Heroku
+You will need to install Heroku CLI
 ```
-deta login
+heroku git:remote -a songtagsbackend  
+git push heroku master
 ```
 

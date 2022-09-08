@@ -4,15 +4,10 @@ pymongo is synchronous, motor is asynchronous
 
 Pydantic docs are good for creating Models based on your MongoDB data! Models are good for get methods 
 
-uvicorn app:app --reload starts the backend 
-
 
 For a good example of updating your mongodb object check add tag function
 
-
-QUERY PARAMETERS
-https://fastapi.tiangolo.com/tutorial/query-params/ 
-
+accessing databases and collections is case sensitive
 
 
 

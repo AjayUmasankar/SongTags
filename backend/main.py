@@ -12,9 +12,17 @@ import motor.motor_asyncio
 import pprint
 
 
+
 app = FastAPI()
-client = motor.motor_asyncio.AsyncIOMotorClient("mongodb+srv://ajay:<password>@songtags.o5vngfj.mongodb.net/test")
-db = client.local
+
+# client = motor.motor_asyncio.AsyncIOMotorClient("mongodb://localhost:27017")
+# db = client.local
+# songTagsCol = db["usertotags"]
+client = motor.motor_asyncio.AsyncIOMotorClient("mongodb+srv://ajay:Newlife1337@songtags.o5vngfj.mongodb.net/test")
+db = client.songtags
+songTagsCol = db["songtags"]
+
+
 
 # this is needed as we are recieving a request from youtube.com origin to our backend
 # the backend needs to say that it will accept requests from that verified origin
@@ -81,16 +89,15 @@ class UserModel(BaseModel):
 
 @app.get("/user/{username}", description="Returns the user and his/her tag lists", response_model=UserModel)
 async def getUser(username: str):
-    # userm = await db["usertotags"].find_one({"username": user}, {'_id': 0})
-    user = await db["usertotags"].find_one({"username": username})
+    # userm = await songTagsCol.find_one({"username": user}, {'_id': 0})
+    user = await songTagsCol.find_one({"username": username})
     return user
 
 
 @app.get("/tags/{username}/{href}", description="Returns a list of tags for the specified song", response_model=List[str])
 async def getTags(username:str, href: str, request: Request):
-    # print(request)
     # print(request.headers)
-    userDict = await getUserDict(username); # db["usertotags"].find_one({"username": username})
+    userDict = await getUserDict(username); # songTagsCol.find_one({"username": username})
     hrefs = userDict['hrefs']
     tags = []
     if href in [*hrefs]:
@@ -107,7 +114,7 @@ async def setTags(username:str, href: str, request: Request):
     #requestjson = request.body()
     print(tags)
     #tags = requestjson['tags']
-    userDict = await getUserDict(username); # db["usertotags"].find_one({"username": username})
+    userDict = await getUserDict(username); 
     hrefs = (userDict["hrefs"]) # is a dictionary
     if href not in [*hrefs]:
         userDict['hrefs'][href] = []
@@ -125,13 +132,13 @@ async def setTags(username:str, href: str, request: Request):
     newvalues = { "$set": {  hreftochange : tags },
     }
 
-    db["usertotags"].update_one( usertoupdate, newvalues, upsert=True)
+    songTagsCol.update_one( usertoupdate, newvalues, upsert=True)
     return JSONResponse(status_code=status.HTTP_201_CREATED, content=tags)
 
 # http://127.0.0.1:8000/addtag/ajay/testHref/testtag
 # @app.post("/tags/{username}/{href}/{tag}", description="Adds a single tag to a song", response_description="Tag successfully added")
 # async def addTag(username:str, href: str, tag: str):
-    # userDict = await getUserDict(username); # db["usertotags"].find_one({"username": username})
+    # userDict = await getUserDict(username); # songTagsCol.find_one({"username": username})
     # hrefs = (userDict["hrefs"]) # is a dictionary
     # if href not in [*hrefs]:
     #     userDict['hrefs'][href] = []
@@ -142,12 +149,13 @@ async def setTags(username:str, href: str, request: Request):
     # usertoupdate = { "username" : username }
     # newvalues = { "$set": { "hrefs": { href: tags } }}
 
-    # db["usertotags"].update_one(usertoupdate, newvalues)
+    # songTagsCol.update_one(usertoupdate, newvalues)
     # return JSONResponse(status_code=status.HTTP_201_CREATED, content=tags)
 
 
 async def getUserDict(username: str):
-    user = await db["usertotags"].find_one({"username": username})
+    print(songTagsCol)
+    user = await songTagsCol.find_one({"username": username})
     # to serialize bson document to a json formatted string
     userJson = dumps(user)
     # to deseralize json and create a python object 
