@@ -1,14 +1,14 @@
 {
-    "name":  "Youtube Categorization",
-    "description" : "Attach and keep track of categories to videos you watch!",
-    "version" : "0.1",
+    "name":  "YouTube Tags",
+    "description" : "Add tags to YouTube songs when on the playlist page. ** Unlisted **",
+    "version" : "0.2",
     "manifest_version" : 3,
-    "permissions": ["storage", "contentSettings", "activeTab", "tabs"],
+    "permissions": [],
     "content_scripts": [
         {
             "matches": ["https://*.youtube.com/playlist*"],
-            "css": ["./external_modules/bootstrap-5.1.3/css/bootstrap.css", "src/tagBox/tagBoxStyle.css"],
-            "js": ["./external_modules/bootstrap-5.1.3/js/bootstrap.js", "built/src/tagBox/tagBox.js", "built/src/AddTagBoxes.js"],
+            "css": ["./external_modules/bootstrap-5.1.3/css/bootstrap.css", "./src/components/tagBox/tagBoxStyle.css"],
+            "js": ["./external_modules/bootstrap-5.1.3/js/bootstrap.js", "./src/components/tagBox/tagBox.js", "src/AddTagBoxes.js"],
             "run_at": "document_idle"
         }
     ],
@@ -19,7 +19,7 @@
         "128": "/images/get_started128.png"
     },
     "action" : {
-        "default_popup": "./src/popup/popup.html",
+        "default_popup": "./src/pages/popup/popup.html",
         "default_icon": {
             "16": "/images/get_started16.png",
             "32": "/images/get_started32.png",
@@ -27,5 +27,5 @@
             "128": "/images/get_started128.png"
         }
     },
-    "options_page": "./src/options/index.html"
+    "options_page": "./src/pages/options/index.html"
 }

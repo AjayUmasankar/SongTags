@@ -1,17 +1,3 @@
-let btn = document.getElementById('checkExtensionPerms');
-btn.addEventListener('click', (event) => {
-    console.log('Clicked button!');
-    chrome.contentSettings.javascript.get({primaryUrl:'https://*.youtube.com/playlist?list=*'},
-        (details) => {
-            console.log(details);
-            // return 'JavaScript : '+details.setting+'<br>';
-    });
-    // .then((res) => {
-    //     console.log(res);
-    // });
-})
-
-
 // // Initialize button with user's preferred color
 // let changeColor = document.getElementById("changeColor");
 

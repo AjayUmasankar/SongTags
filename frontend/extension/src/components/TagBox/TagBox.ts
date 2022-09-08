@@ -5,11 +5,13 @@ class tagBox {
     tags: Array<string>;
     href: string;
     divEl: Element;
+    static tagsResource: string = "https://songtagsbackend.herokuapp.com/tags/ajay/" // for local uvicorn connection: "http://127.0.0.1:8000/tags/ajay/"
+
 
     constructor(href: string) {
         // this = document.createElement('div');
         // let tagBoxDiv: Element = document.createElement('DIV');
-        this.href = href;
+        this.href = href; 
         this.divEl = document.createElement('DIV');
         this.divEl.classList.add("wrapper");
         this.divEl.addEventListener("click", (evt: any) => evt.stopPropagation());
@@ -20,7 +22,11 @@ class tagBox {
             </div>
         ` 
         this.tags = [];
-        this.getStorageTags();
+        this.getStorageTags().then(tagsString => {
+            this.tags = JSON.parse(tagsString)
+            this.rebuildTags()
+        })
+
         this.ul = this.divEl.querySelector("ul") as HTMLUListElement,
         this.input = this.divEl.querySelector("input") as HTMLInputElement,
         this.maxTags = 10,
@@ -35,10 +41,7 @@ class tagBox {
         // console.log('After constructor Tags is:', this.tags);
     }
 
-
     async getStorageTags() {
-        const href = this.href;
-          
         /*
         fetch("http://127.0.0.1:8000/tags/ajay/KmDQuwJWs84", {
             method: 'GET',
@@ -46,26 +49,24 @@ class tagBox {
             mode: 'cors'
         })
         */
-        let tagsString = await fetch("http://127.0.0.1:8000/tags/ajay/" + href, {
+        let getStorageTagsUrl = tagBox.tagsResource + this.href
+        let tagsString = await fetch(getStorageTagsUrl, {
             method: 'GET',
             redirect: 'follow',
             mode: 'cors' as RequestMode
         }).then(response => {
             let responsetext = response.text() 
-            console.log(responsetext)
             return responsetext
         }).catch(error => console.log('error', error)) || '[]';
-        this.tags = JSON.parse(tagsString)
-        this.rebuildTags()
+        return tagsString;
         // return chrome.storage.local.get(href, (items) => {
         //     this.tags = items[href] ?? [];
         //     this.rebuildTags();
         // });
     }
 
-    async updateStorageTags()  {
-        //console.log(await this.setCurrentTags());
-        let result = await fetch("http://127.0.0.1:8000/tags/ajay/"+this.href, {
+    async updateBackend()  {
+        return await fetch(tagBox.tagsResource+this.href, {
             method: 'POST',
             redirect: 'follow',
             mode: 'cors' as RequestMode,
@@ -84,16 +85,46 @@ class tagBox {
         // this.tagNumb.innerText = this.maxTags - this.tags.length;
     }
     
+
+    // Reads input field and adds the tag
+    addTag(e:KeyboardEvent){
+        if (e.key !== 'Enter') return;
+        //if (!this.tags) this.tags = [];
+        //console.log('Tags is:', this.tags);
+        //console.log(e.target);
+        let inputEl = e.target as HTMLInputElement;
+        if(e.key != "Enter") return; 
+
+        // Can have up to 10 tags. No duplicates. Minimum length = 1
+        let tag = inputEl.value.replace(/\s+/g, ' ');
+        if(tag.length > 1 && !this.tags.includes(tag)){
+            if(this.tags.length >= 10) return; 
+            tag.split(',').forEach(tag => {
+                this.tags.push(tag);
+                this.rebuildTags();
+            });
+        }
+        inputEl.value = "";
+        this.updateBackend();
+    }
+
+    removeTag(evt:MouseEvent, tag: string){
+        let element = evt.target as Element;
+        console.log('Removing tag element:', element);
+        if(!element) return;
+        let index: number  = this.tags.indexOf(tag);
+        this.tags = [...this.tags.slice(0, index), ...this.tags.slice(index + 1)];
+        element.remove();
+        this.updateBackend();
+    }
+
     // Rebuilds the tag box contents for the associated href
     rebuildTags(){
-        console.log('Creating Tags!');
-        //this.ul = this.ul;
         this.ul.querySelectorAll("li").forEach(li => li.remove());
         if(this.tags.length == 0) return; // or else the slice below causes errors
         this.tags.slice().reverse().forEach(tag =>{
 
-            let liTag = document.createElement('li');
-            // liTag.outerHTML = `<li>${tag} <i class="uit uit-multiply"></i></li>`;
+            let liTag: HTMLLIElement = document.createElement('li');
             liTag.innerHTML = `${tag}`
             // let liTag = `<li>${tag} <i class="uit uit-multiply"></i></li>`; # if you need the X
             let removeTagBound = this.removeTag.bind(this);
@@ -101,42 +132,6 @@ class tagBox {
             this.ul.insertAdjacentElement("afterbegin", liTag);
         });
     }
-    removeTag(evt:MouseEvent, tag: string){
-        //console.log(evt);
-        let element = evt.target as Element;
-        console.log('Removing tag element:', element);
-        if(!element) return;
-        let index  = this.tags.indexOf(tag);
-        this.tags = [...this.tags.slice(0, index), ...this.tags.slice(index + 1)];
-        // console.log('Removing Element:', element.parentElement);
-        element.remove();
-        this.updateStorageTags();
-        //this.getStorageTags();
-    }
-
-    // Add one single tag
-    addTag(e:KeyboardEvent){
-        if (e.key !== 'Enter') return;
-        //if (!this.tags) this.tags = [];
-        console.log('Tags is:', this.tags);
-        //console.log(e.target);
-        let inputEl = e.target as HTMLInputElement;
-        if(e.key == "Enter"){
-            let tag = inputEl.value.replace(/\s+/g, ' ');
-            if(tag.length > 1 && !this.tags.includes(tag)){
-                if(this.tags.length < 10){
-                    tag.split(',').forEach(tag => {
-                        this.tags.push(tag);
-                        this.rebuildTags();
-                    });
-                }
-            }
-            inputEl.value = "";
-        }
-        this.updateStorageTags();
-    }
-
-
 }
 
 

@@ -46,20 +46,15 @@ function initializeTagBoxes() {
     const songPanes: NodeList = document.querySelectorAll("div ytd-playlist-video-renderer"); 
     songPanes.forEach((songPane) => {
         let songPaneEl = songPane as Element;
-        //console.log(songPaneEl.children);
         const contentNode : Element = songPaneEl.children[1];
         const menuNode : Element = songPaneEl.children[2]; 
         const anchorEl = contentNode.children[0].children[0].children[0] as HTMLAnchorElement;
-        //console.log(anchorEl);
-        console.log(parseHref(anchorEl.href))
         const tagBoxEl = new tagBox(parseHref(anchorEl.href))
         contentNode.appendChild(tagBoxEl.divEl);
-        //menuNode.insertAdjacentElement('beforebegin', tagBoxEl.divEl);
     })
 }
 
 function parseHref(href: string) {
-    //const regex = new RegExp('www.youtube.com/watch?v=(.*)&list=')
     const regexp: RegExp = /watch\?v=(.*)&list/i;
     const result: RegExpMatchArray = href.match(regexp) as RegExpMatchArray;
     return result[1];

@@ -75,12 +75,12 @@ class UserModel(BaseModel):
             },
             "hrefs": {
                 "KmDQuwJWs84": [
-                "nightcore",
-                "usao",
-                "crazybeat"
+                    "nightcore",
+                    "usao",
+                    "crazybeat"
                 ],
                 "testHref": [
-                "testtag"
+                    "testtag"
                 ]
             },
             "username": "bjay"
@@ -98,7 +98,7 @@ async def getUser(username: str):
 async def getTags(username:str, href: str, request: Request):
     # print(request.headers)
     userDict = await getUserDict(username); # songTagsCol.find_one({"username": username})
-    hrefs = userDict['hrefs']
+    hrefs = userDict["hrefs"]
     tags = []
     if href in [*hrefs]:
         tags = userDict["hrefs"][href]
@@ -108,12 +108,9 @@ async def getTags(username:str, href: str, request: Request):
 
 @app.post("/tags/{username}/{href}", description="Sets the list of tags for the song", response_description="Tag successfully added")
 async def setTags(username:str, href: str, request: Request):
-    #print(payload['tags']
     # print(request.headers)
     tags = await request.json() # gets the body
-    #requestjson = request.body()
     print(tags)
-    #tags = requestjson['tags']
     userDict = await getUserDict(username); 
     hrefs = (userDict["hrefs"]) # is a dictionary
     if href not in [*hrefs]:
@@ -129,8 +126,7 @@ async def setTags(username:str, href: str, request: Request):
     }
 
     hreftochange = "hrefs." + href
-    newvalues = { "$set": {  hreftochange : tags },
-    }
+    newvalues = { "$set": {  hreftochange : tags } }
 
     songTagsCol.update_one( usertoupdate, newvalues, upsert=True)
     return JSONResponse(status_code=status.HTTP_201_CREATED, content=tags)

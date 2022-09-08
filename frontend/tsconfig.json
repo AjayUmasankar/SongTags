@@ -1,11 +1,14 @@
 {
     "compilerOptions": {
+      "moduleResolution": "Node",
       "rootDir": "src",
-      "outDir": "built/src",
+      "outDir": "../chromeextension/built/src",
       "sourceMap": true,
       "allowJs": true,
       "target": "es6",
       "strict": true,
+      "noEmit": true,
+      "esModuleInterop": true
     },
-    "include": ["src/*.ts", "src/TagBox/*.ts"]
+    "include": ["src/*.ts", "src/TagBox/*"]
   }
