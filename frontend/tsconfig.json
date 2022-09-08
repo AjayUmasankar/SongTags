@@ -1,0 +1,11 @@
+{
+    "compilerOptions": {
+      "rootDir": "src",
+      "outDir": "built/src",
+      "sourceMap": true,
+      "allowJs": true,
+      "target": "es6",
+      "strict": true,
+    },
+    "include": ["src/*.ts", "src/TagBox/*.ts"]
+  }
