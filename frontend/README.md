@@ -17,10 +17,13 @@ This probably wont work, especially if "noEmit" is turned on
 CtrlShiftB in Visual Studio Code and select tsc: watch - tsconfig.json
 `npx tsc watch`       # this may be the same way to achieve the above
 
-# To Autobuild/Watch using Babel  (RECOMMENDED)
-moves all files to built folder and transpiles .ts
+# To Autobuild/Watch using Babel  (NOT RECOMMENDED)
+moves all files to built folder and transpiles .ts. Does not do anything for .scss files
+currently wont work as import statements arent bundled and chrome will complain about using imports outside a module
 `npx babel extension --out-dir ./extensionbuilt --extensions ".ts" --copy-files --watch --no-copy-ignored -s`
 
+# To Autobuild/Watch using Webpack (RECCOMMENDED)
+`npx webpack`
 
 
 # To test your frontend code changes

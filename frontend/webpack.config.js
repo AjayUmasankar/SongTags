@@ -34,8 +34,7 @@ module.exports = [
         },
         {
           test: /\.scss$/,
-                                    // Loaders are executed from bottom to top
-          use: [
+          use: [                                            // loaders are executed from bottom to top
             {
                 loader: 'file-loader',                      // Think we use this just to move our css files
                 options: { name: '[path][name].css'}        // this is meant to be .min.cs
@@ -51,7 +50,7 @@ module.exports = [
           { from: "**/*.css", to: "[path][name][ext]"},
           { from: "**/*.png", to: "[path][name][ext]"},
           { from: "**/*.html", to: "[path][name][ext]"},
-          { from: "external_modules/bootstrap-5.1.3/js/bootstrap.js", to: "external_modules/bootstrap-5.1.3/js/bootstrap.js"},
+          { from: "external_modules/bootstrap-5.1.3/bootstrap.min.js", to: "external_modules/bootstrap-5.1.3/bootstrap.min.js"},
           { from: "manifest.json", to: "manifest.json"}
         ]
       })
@@ -63,5 +62,6 @@ module.exports = [
     node: {
       __dirname: false,
     },
+    watch: true,
   }
 ];

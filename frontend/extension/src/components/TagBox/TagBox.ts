@@ -26,8 +26,8 @@ export class TagBox {
         <div class = "content">
             <ul> </ul>
             <div class="text-input">
-                <input type="text" id="input1" placeholder="">
-                <label for="input1" class=taglabel>+</label>
+                <input type="text" id="` + href + `" placeholder="">
+                <label for="` + href + `" class=taglabel>+</label>
             </div>
         </div>
         `

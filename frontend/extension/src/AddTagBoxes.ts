@@ -49,6 +49,8 @@ function initializeTagBoxes() {
         let songPaneEl = songPane as Element;
         const contentNode : Element = songPaneEl.children[1];
         const menuNode : Element = songPaneEl.children[2]; 
+        const containerEl = contentNode.children[0] as HTMLDivElement;
+        containerEl.style.alignItems = 'center';
         const anchorEl = contentNode.children[0].children[0].children[0] as HTMLAnchorElement;
         const tagBoxEl = new TagBox(parseHref(anchorEl.href))
         contentNode.appendChild(tagBoxEl.divEl);

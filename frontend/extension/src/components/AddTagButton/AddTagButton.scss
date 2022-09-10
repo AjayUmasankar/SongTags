@@ -1,38 +1,44 @@
 @import  url(https://fonts.googleapis.com/css?family=Montserrat);
 
-body{
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 100vh;
-  font-family: Montserrat;
-  background: #313E50;
-}
+// body{
+//   display: flex;
+//   flex-direction: column;
+//   align-items: center;
+//   justify-content: center;
+//   height: 100vh;
+//   font-family: Montserrat;
+//   background: #313E50;
+// }
 
 .text-input{
-  
   position: relative;
-  // margin-top: 50px;
-    
+  display: flex;
+  justify-content: center;
+
+
   input[type="text"]{
     display: flex;
     height: 40px;
-    width: 0%;
+    width: 40px;
     box-sizing: border-box;
     outline: none;
+    font-family: 'Roboto';
     // border: 1px solid lightgray;
-    // border-radius: 3px;
-    padding: 10px 10px 10px 10px;
     transition: all 0.4s ease-out;
+    border: .5px solid #b42626;     // de0505 for brighter red
+    border-radius: 3px 3px 3px 3px;
+    background-color : #000000; 
+    color: #ffffff;
+    opacity:0%;
+    padding: 10px 10px 10px 10px;
   }
+
   
   input[type="text"]:focus{
-    // padding: 10px 10px 10px 10px;
-    // min-width: 100px;
-    width:60%;
-    transition: all 0.3s ease-out;
-    // transition-delay: 0.2s;
+    // width:35%;
+    width:196px;
+    opacity:100%;
+    transition: width 0.4s ease-out, opacity .3s linear;
   }
   
   input[type="text"] + .taglabel {
@@ -41,26 +47,31 @@ body{
     line-height: 40px;
     color: white;
     border-radius: 3px 3px 3px 3px;
-    padding: 0 20px;
+    padding: 0px 20px;
     background: #E03616;
-    // top: 0;
-    // left: 0;
-    // height: px;
-    // transition: all 0.3s ease-in;
-    // transition-delay: 0.2s;
-    transform: translateZ(0) translateX(0);
-    transition: transform 0.3s ease-in, opacity 0.3s ease-in;
+    width:45px;
 
+    transform: translateZ(0) translateX(0);
+    transition: transform 0.3s ease-in, opacity 0.3s ease-in, width 0.3s ease-in;
   }
   
   input[type="text"]:focus + .taglabel {
-    transform: translateY(-0%)                            
-               translateX(1100%);
-    // border-radius: 3px;
-    transition: transform 0.3s ease-in, opacity 0.3s ease-in;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    transition: transform 0.3s ease-in, opacity 0.5s ease-out, width 0.3s ease-out, height 0.3s ease-out;
     opacity: 0%;
+    width: 196px;
+    // width: 35%;
+    height: 103%;
   }
 }
+
+
+
 
 
 // Originally from https://codepen.io/takeradi/pen/mPyYeq

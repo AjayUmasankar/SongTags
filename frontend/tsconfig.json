@@ -23,6 +23,7 @@
       "allowJs": true,
       "esModuleInterop": true, 
       "moduleResolution": "Node",
+      "isolatedModules": true,                // Makes sure everything is a module, or else itll be a global script instead. More in onenote...
     },
     "include": ["./extension/**/*.ts"]         // includes all .ts files in extension as **/ matches any directory nested to any level
   }
