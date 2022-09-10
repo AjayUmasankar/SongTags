@@ -1,9 +1,8 @@
 const delay = (t:number) => new Promise(resolve => setTimeout(resolve, t));
 
+window.onload = () => main();
 
-window.onload = () => loadExtension();
-
-async function loadExtension() {
+async function main() {
     console.log("Window Loaded!", Date.now());
     //const userToTags = await initializeMongoDB();
     delay(1000).then(() => {initializeTagBoxes(); })

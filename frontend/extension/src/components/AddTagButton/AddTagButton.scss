@@ -1,0 +1,63 @@
+@import  url(https://fonts.googleapis.com/css?family=Montserrat);
+
+body{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  font-family: Montserrat;
+  background: #313E50;
+}
+
+.text-input{
+  
+  position: relative;
+  // margin-top: 50px;
+    
+  input[type="text"]{
+    display: flex;
+    height: 40px;
+    width: 0%;
+    box-sizing: border-box;
+    outline: none;
+    // border: 1px solid lightgray;
+    // border-radius: 3px;
+    padding: 10px 10px 10px 10px;
+    transition: all 0.4s ease-out;
+  }
+  
+  input[type="text"]:focus{
+    // padding: 10px 10px 10px 10px;
+    // min-width: 100px;
+    width:60%;
+    transition: all 0.3s ease-out;
+    // transition-delay: 0.2s;
+  }
+  
+  input[type="text"] + .taglabel {
+    position: absolute;
+    bottom: 0;
+    line-height: 40px;
+    color: white;
+    border-radius: 3px 3px 3px 3px;
+    padding: 0 20px;
+    background: #E03616;
+    // top: 0;
+    // left: 0;
+    // height: px;
+    // transition: all 0.3s ease-in;
+    // transition-delay: 0.2s;
+    transform: translateZ(0) translateX(0);
+    transition: transform 0.3s ease-in, opacity 0.3s ease-in;
+
+  }
+  
+  input[type="text"]:focus + .taglabel {
+    transform: translateY(-0%)                            
+               translateX(1100%);
+    // border-radius: 3px;
+    transition: transform 0.3s ease-in, opacity 0.3s ease-in;
+    opacity: 0%;
+  }
+}

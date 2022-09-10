@@ -7,8 +7,8 @@
     "content_scripts": [
         {
             "matches": ["https://*.youtube.com/playlist*"],
-            "css": ["./external_modules/bootstrap-5.1.3/css/bootstrap.css", "./src/components/tagBox/tagBoxStyle.css"],
-            "js": ["./external_modules/bootstrap-5.1.3/js/bootstrap.js", "./src/components/tagBox/tagBox.js", "src/AddTagBoxes.js"],
+            "css": ["./external_modules/bootstrap-5.1.3/css/bootstrap.css", "./src/components/tagBox/tagBoxStyle.css", "./src/components/AddTagButton/AddTagButton.css"],
+            "js": ["./external_modules/bootstrap-5.1.3/js/bootstrap.js", "./src/components/tagBox/tagBox.js", "./src/components/BackendNotifier.js", "src/AddTagBoxes.js"],
             "run_at": "document_idle"
         }
     ],

@@ -5,8 +5,6 @@ class tagBox {
     tags: Array<string>;
     href: string;
     divEl: Element;
-    static tagsResource: string = "https://songtagsbackend.herokuapp.com/tags/ajay/" // for local uvicorn connection: "http://127.0.0.1:8000/tags/ajay/"
-
 
     constructor(href: string) {
         // this = document.createElement('div');
@@ -14,15 +12,25 @@ class tagBox {
         this.href = href; 
         this.divEl = document.createElement('DIV');
         this.divEl.classList.add("wrapper");
-        this.divEl.addEventListener("click", (evt: any) => evt.stopPropagation());
+        this.divEl.addEventListener("click", (evt: any) => evt.stopPropagation()); // Or else we trigger youtubes click handler and enter the song
         this.divEl.innerHTML =
+        // `
+        //     <div class="content">
+        //         <ul><input type="text" spellcheck="false" onkeydown="this.style.width = ((this.value.length + 1) * 1) + 'ch';" style="width:50px"></ul>
+        //     </div>
+        // ` 
+
         `
-            <div class="content">
-                <ul><input type="text" spellcheck="false" onkeydown="this.style.width = ((this.value.length + 1) * 1) + 'ch';" style="width:50px"></ul>
+        <div class = "content">
+            <ul> </ul>
+            <div class="text-input">
+                <input type="text" id="input1" placeholder="">
+                <label for="input1" class=taglabel>+</label>
             </div>
-        ` 
+        </div>
+        `
         this.tags = [];
-        this.getStorageTags().then(tagsString => {
+        BackendNotifier.getStorageTags(this.href).then(tagsString => {
             this.tags = JSON.parse(tagsString)
             this.rebuildTags()
         })
@@ -41,50 +49,7 @@ class tagBox {
         // console.log('After constructor Tags is:', this.tags);
     }
 
-    async getStorageTags() {
-        /*
-        fetch("http://127.0.0.1:8000/tags/ajay/KmDQuwJWs84", {
-            method: 'GET',
-            redirect: 'follow',
-            mode: 'cors'
-        })
-        */
-        let getStorageTagsUrl = tagBox.tagsResource + this.href
-        let tagsString = await fetch(getStorageTagsUrl, {
-            method: 'GET',
-            redirect: 'follow',
-            mode: 'cors' as RequestMode
-        }).then(response => {
-            let responsetext = response.text() 
-            return responsetext
-        }).catch(error => console.log('error', error)) || '[]';
-        return tagsString;
-        // return chrome.storage.local.get(href, (items) => {
-        //     this.tags = items[href] ?? [];
-        //     this.rebuildTags();
-        // });
-    }
 
-    async updateBackend()  {
-        return await fetch(tagBox.tagsResource+this.href, {
-            method: 'POST',
-            redirect: 'follow',
-            mode: 'cors' as RequestMode,
-            body: JSON.stringify(this.tags)
-        }).then(response => {
-            let responsetext = response.text() 
-            return responsetext;
-        }).catch(error => console.log('error', error)) || '[]';
-
-        // let key = this.href;
-        // let value = this.tags;
-        // var kvObj : any = {};
-        // kvObj[key] = value;
-        // return await chrome.storage.local.set(kvObj);
-        // console.log(await this.getCurrentTags());
-        // this.tagNumb.innerText = this.maxTags - this.tags.length;
-    }
-    
 
     // Reads input field and adds the tag
     addTag(e:KeyboardEvent){
@@ -105,7 +70,8 @@ class tagBox {
             });
         }
         inputEl.value = "";
-        this.updateBackend();
+        BackendNotifier.updateTagsForSong(this.href, this.tags);
+        // this.updateTagsForSong(this.href, this.tags);
     }
 
     removeTag(evt:MouseEvent, tag: string){
@@ -115,7 +81,7 @@ class tagBox {
         let index: number  = this.tags.indexOf(tag);
         this.tags = [...this.tags.slice(0, index), ...this.tags.slice(index + 1)];
         element.remove();
-        this.updateBackend();
+        BackendNotifier.updateTagsForSong(this.href, this.tags);
     }
 
     // Rebuilds the tag box contents for the associated href

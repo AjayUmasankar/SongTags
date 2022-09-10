@@ -9,6 +9,14 @@ For a good example of updating your mongodb object check add tag function
 
 accessing databases and collections is case sensitive
 
+Pydantic BaseSettings allows for easy reading in of env variables, from file or heroku or otherwise
+
+Need to point vscode python interpreter (Ctrlshiftp) to the virtual environment
+
+Its better to always update db instead of just calling the db once at the start and keeping track of local and db copy
+
+pytyhon global variables can be referenced easily. altho to modify it you need to do a `global varname` at the start of function
+
 ***************** heroku learnings **********************
 heroku machines use linux so you need to maintain two different procfiles :(
 `heroku config:set LOG_LEVEL=debug` more logs
@@ -36,14 +44,20 @@ regex syntax
 
 `npx tsc` does type checking `npx tsc --watch`
 
+if typescript is complaining about references. e.g. cant find TagBox from AddTagBoxes.ts, then add a path to TagBox in tsconfig.json include section.
+Even with ts complaining, babel will still compile fine 
+tsconfig.json has useful comments
+
 https://iamturns.com/typescript-babel/
-babel.config.json
+babel.config.json has useful comments
 babel used for transpiling (translate programming language -> another). Faster JS emit time apparantly 
 Babel can be set to output javascript that is compatible for certain browsers and versions. 
 Can set to compile with latest browsers for dev and larger range during production
 Babel means that we will only need ONE compiler. Instead of linters, test runners, build systems, and boilerplates supporting different compilers, they just need to support Babel.
 Its faster to compile than typescript watch. 
 We can have it only check for type errors when youre ready.
+-s is used for source maps
+
 
 ***************** api request learnings *****************
 Sending a request from the browser with no-cors gets an opaque response which wont work. The server needs to send the required CORS headers
