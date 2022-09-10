@@ -1,3 +1,5 @@
+import { TagBox } from './components/TagBox/TagBox';
+
 const delay = (t:number) => new Promise(resolve => setTimeout(resolve, t));
 
 window.onload = () => main();
@@ -48,7 +50,7 @@ function initializeTagBoxes() {
         const contentNode : Element = songPaneEl.children[1];
         const menuNode : Element = songPaneEl.children[2]; 
         const anchorEl = contentNode.children[0].children[0].children[0] as HTMLAnchorElement;
-        const tagBoxEl = new tagBox(parseHref(anchorEl.href))
+        const tagBoxEl = new TagBox(parseHref(anchorEl.href))
         contentNode.appendChild(tagBoxEl.divEl);
     })
 }

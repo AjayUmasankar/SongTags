@@ -1,4 +1,6 @@
 {
+	// this file is not even used when we move to webpack as we pass in those configs directly there
+	
 	// presets are a shareable set of babel plugins and/or config options
 	"presets": [
 			"@babel/typescript"

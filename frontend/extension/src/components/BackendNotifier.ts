@@ -1,4 +1,4 @@
-class BackendNotifier {
+export class BackendNotifier {
     static tagsResource: string = "https://songtagsbackend.herokuapp.com/tags/ajay/" // for local uvicorn connection: "http://127.0.0.1:8000/tags/ajay/"
 
     static async updateTagsForSong(href: string, tags: Array<string>) {

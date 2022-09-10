@@ -37,6 +37,10 @@ this.divEl.addEventListener("click", (evt: any) => evt.stopPropagation()); so th
 
 
 *****************TYPESCRIPT LEARNINGS*****************
+In TypeScript, just as in ECMAScript 2015, any file containing a top-level import or export is considered a module. 
+Conversely, a file without any top-level import or export declarations is treated as a script whose contents are available 
+in the global scope (and therefore to modules as well).
+
 auto compile into js files on save. CtrlShiftB and select tsc: watch - tsconfig.json
 https://stackoverflow.com/questions/29996145/visual-studio-code-compile-on-save
 
@@ -57,7 +61,7 @@ Babel means that we will only need ONE compiler. Instead of linters, test runner
 Its faster to compile than typescript watch. 
 We can have it only check for type errors when youre ready.
 -s is used for source maps
-
+Babel configuration is highkey a nightmare, check this project again if youre trying to compile some files and copy some files to a built folder.
 
 ***************** api request learnings *****************
 Sending a request from the browser with no-cors gets an opaque response which wont work. The server needs to send the required CORS headers

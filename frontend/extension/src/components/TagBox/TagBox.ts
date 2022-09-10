@@ -1,4 +1,6 @@
-class tagBox {
+import { BackendNotifier } from '../BackendNotifier';
+
+export class TagBox {
     ul: HTMLUListElement;
     input: HTMLInputElement;
     maxTags: number;
