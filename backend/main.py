@@ -8,6 +8,7 @@ from config import settings, setupCors # stores environment variables
 import motor.motor_asyncio
 import pprint
 import time
+import requests
 
 
 
@@ -98,22 +99,45 @@ async def getUser(username: str):
 #     raise HTTPException(status_code=404, detail=f"Student {id} not found")
 
 
-@app.get("/tags/{username}/{href}", description="Returns a list of tags for the specified song", response_model=List[str])
+class Tag(BaseModel):
+    type: str = Field(...)
+
+    class Config:
+        arbitrary_types_allowed: True
+
+class TagDict(BaseModel):
+    __root__: dict[str, Tag]
+
+    class Config:
+        arbitrary_types_allowed: True
+
+@app.get("/tags/{username}/{href}", description="Returns a list of tags for the specified song", response_model=TagDict)
 async def getTags(username:str, href: str, request: Request):
-    # print(request.headers)
     hrefs = userDict["hrefs"]
-    tags = []
+    tags = {}
     if href in [*hrefs]:
         tags = userDict["hrefs"][href]
-    #pprint.pprint(tags)
+
+    if(isinstance(tags, list)):
+        print("this one is still a list")
+        newmap = {}
+        for tag in tags:
+            newmap[tag] = { "type": "default" }
+        tags = newmap
+    
+    # createAuthorTag = True;
+    # for [key, value] in tags:
+    #     if value.type == "author":
+    #         createAuthorTag = False;
+
     return tags
 
 
-@app.post("/tags/{username}/{href}", description="Sets the list of tags for the song", response_description="Tag successfully added")
+@app.post("/tags/{username}/{href}", description="Sets the list of tags for the song", response_description="Tags successfully set")
 async def setTags(username:str, href: str, request: Request):
-    # print(request.headers)
     tags = await request.json() # gets the body
-    print(tags)
+
+    # WE ALSO NEED TO CORRECTLY CATEGORIZE ALL TAGS HERE
     hrefs = (userDict["hrefs"]) # is a dictionary
     if href not in [*hrefs]:
         userDict['hrefs'][href] = []

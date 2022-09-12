@@ -47,13 +47,35 @@ function initializeTagBoxes() {
     const songPanes: NodeList = document.querySelectorAll("div ytd-playlist-video-renderer"); 
     songPanes.forEach((songPane) => {
         let songPaneEl = songPane as Element;
-        const contentNode : Element = songPaneEl.children[1];
+
+        // This is the div that represents the whole row
+        const contentEl = songPaneEl.children[1] as HTMLDivElement;
         const menuNode : Element = songPaneEl.children[2]; 
-        const containerEl = contentNode.children[0] as HTMLDivElement;
+
+        // This is youtubes container element including which contains the thumbnail and metadata
+        const containerEl = contentEl.children[0] as HTMLDivElement;
         containerEl.style.alignItems = 'center';
-        const anchorEl = contentNode.children[0].children[0].children[0] as HTMLAnchorElement;
-        const tagBoxEl = new TagBox(parseHref(anchorEl.href))
-        contentNode.appendChild(tagBoxEl.divEl);
+        contentEl.style.flexWrap = 'nowrap'
+
+        // Within the thumbnail we can get the href
+        const thumbnailEl = containerEl.children[0] as HTMLElement;
+        const anchorEl = thumbnailEl.children[0] as HTMLAnchorElement;
+
+        // Within the metadata we can get the song title, author
+        const metaEl = containerEl.children[1];
+        const metaDataEl = metaEl.children[1].children[0] as HTMLDivElement;
+        const channelNameContainerEl = metaDataEl.children[0].children[0].children[0] as HTMLDivElement;
+        const channelNameEl = channelNameContainerEl.children[0].children[0].children[0] as HTMLAnchorElement;
+        // console.log(channelNameEl.innerText)
+
+        const songNameEl = metaEl.children[0].children[1] as HTMLAnchorElement
+        // console.log(songNameEl);
+        // console.log(songNameEl.innerText)
+
+
+
+        const tagBoxEl = new TagBox(parseHref(anchorEl.href), channelNameEl.innerText, songNameEl.innerText)
+        contentEl.appendChild(tagBoxEl.divEl);
     })
 }
 

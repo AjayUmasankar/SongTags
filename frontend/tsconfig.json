@@ -14,8 +14,10 @@
                                               // Now when we use it from our typescript code, we get types and intellisense
                                               // the declaration file only proides type decalarations of functions variables defined in the re
                                               spective js file.
-      "emitDeclarationOnly": true,            // as it says. useful when you are using a transpiler other than ts and you only want .d.ts   */
-      
+      "emitDeclarationOnly": true,            // as it says. useful when you are using a transpiler other than ts and you only want .d.ts  */
+      // "include": ["./extension/**/*.ts"]   // includes all .ts files in extension as /**/* matches any directory nested to any level. 
+                                              // includes all files in dir by default for type checking purpsoes
+
       /* More general stuff */
       "noEmit": true,                         // doesnt emit compiler output files like js, source-maps. can use babel instead for building. npx tsc will just become a type checker
       "strict": true,                         // The strict flag enables a wide range of type checking behavior that results in stronger guarantees of program correctness.
@@ -24,6 +26,6 @@
       "esModuleInterop": true, 
       "moduleResolution": "Node",
       "isolatedModules": true,                // Makes sure everything is a module, or else itll be a global script instead. More in onenote...
+      "downlevelIteration": true              // was needed for combining maps 
     },
-    "include": ["./extension/**/*.ts"]         // includes all .ts files in extension as **/ matches any directory nested to any level
   }

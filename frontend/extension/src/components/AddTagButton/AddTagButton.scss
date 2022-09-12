@@ -10,16 +10,21 @@
 //   background: #313E50;
 // }
 
+$labelPosWithPadding: 5px;
+$height: 33px;
+
 .text-input{
   position: relative;
   display: flex;
   justify-content: center;
+  padding: $labelPosWithPadding 12px;
 
 
   input[type="text"]{
     display: flex;
-    height: 40px;
+    height: $height;
     width: 40px;
+    
     box-sizing: border-box;
     outline: none;
     font-family: 'Roboto';
@@ -42,14 +47,16 @@
   }
   
   input[type="text"] + .taglabel {
+    display:flex;
+    justify-content:center;
     position: absolute;
-    bottom: 0;
-    line-height: 40px;
+    bottom: $labelPosWithPadding;
+    line-height: $height;
     color: white;
     border-radius: 3px 3px 3px 3px;
     padding: 0px 20px;
     background: #E03616;
-    width:45px;
+    width:40px;
 
     transform: translateZ(0) translateX(0);
     transition: transform 0.3s ease-in, opacity 0.3s ease-in, width 0.3s ease-in;
@@ -64,9 +71,9 @@
     user-select: none;
     transition: transform 0.3s ease-in, opacity 0.5s ease-out, width 0.3s ease-out, height 0.3s ease-out;
     opacity: 0%;
-    width: 196px;
+    width: 180px;
     // width: 35%;
-    height: 103%;
+    height: $height;
   }
 }
 

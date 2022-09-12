@@ -1,8 +1,7 @@
 Created with FastAPI, Heroku, and MongoDB Atlas!
 
-
-# To host this backend locally 
-First, install dependencies
+# Setup 
+## Install Requirements
 ```bash
 # Install the requirements in a virtual env:
 py -m venv .venv
@@ -10,32 +9,36 @@ py -m venv .venv
 pip install -r requirements.txt
 ```
 
-Then, setup environment variables
+## Setup environment variables
+Then, setup environment variables in a .env file
 ```
 DATABASE_URL="mongodb+srv://<username>:<password>@songtags.o5vngfj.mongodb.net/test"
 PORT=8000
 ```
 
-## To host via Heroku Local (recommended)
-```
-heroku local web -f Procfile.windows
-```
-Now you can load http://localhost:8000/docs in your browser
-
+# Hosting the backend locally (w/ automatic reload)
 ## To host via uvicorn (FastAPI default)
 ```
+.\\.venv\Scripts\activate
 uvicorn main:app --reload --port=8000
 ```
-Now you can load http://localhost:8000/docs in your browser
+
+## To host via Heroku Local (wont show debug output??)
+```
+.\\.venv\Scripts\activate
+heroku local web -f Procfile.windows
+```
+
+## Configure frontend to point to local backend
+You will need to change the URL in BackendNotifier
 
 
-
-
-# To deploy this backend code to Heroku
+# Deployment 
+## To deploy this backend code to Heroku
 You will need to install Heroku CLI
 ```
 heroku config:set LOG_LEVEL=debug
 heroku git:remote -a songtagsbackend  
 git push heroku master
 ```
-This will create a backend at https://songtagsbackend.herokuapp.com/ 
+The backend will be hosted at https://songtagsbackend.herokuapp.com/ 

@@ -61,7 +61,9 @@ Babel means that we will only need ONE compiler. Instead of linters, test runner
 Its faster to compile than typescript watch. 
 We can have it only check for type errors when youre ready.
 -s is used for source maps
-Babel configuration is highkey a nightmare, check this project again if youre trying to compile some files and copy some files to a built folder.
+Babel configuration is highkey a nightmare, check this project again if youre trying to compile some files and copy some files to a built folder.]
+
+cant stringify a es6 map lmfaoaaaa
 
 ***************** api request learnings *****************
 Sending a request from the browser with no-cors gets an opaque response which wont work. The server needs to send the required CORS headers
