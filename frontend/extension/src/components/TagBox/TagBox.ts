@@ -3,11 +3,14 @@ import { BackendNotifier } from '../BackendNotifier';
 
 export class Tag {
     type: string;
-    constructor (type: string = "default") {
+    // inPlaylist: Boolean;
+    constructor (type: string = "default" /*, inPlaylist: Boolean = false*/) {
         this.type = type;
+        // this.inPlaylist = inPlaylist;
     }
 }
 export class TagBox {
+    inPlaylist: boolean;
     href: string;
 
     divEl: Element;
@@ -18,16 +21,17 @@ export class TagBox {
     tags: Map<string, Tag>;
 
 
-    constructor(href: string, uploader: string, songname: string) {
+    constructor(href: string, uploader: string, songname: string, inPlaylist: boolean) {
         // this = document.createElement('div');
         // let tagBoxDiv: Element = document.createElement('DIV');
+        this.inPlaylist = inPlaylist;
         this.href = href; 
         this.divEl = document.createElement('DIV');
-        this.divEl.classList.add("wrapper");
+        this.divEl.classList.add("tagboxwrapper");
         this.divEl.addEventListener("click", (evt: any) => evt.stopPropagation()); // Or else we trigger youtubes click handler and enter the song
         this.divEl.innerHTML =
         `
-        <div class = "content">
+        <div class = "tagbox">
             <ul> 
             <div class="text-input">
             <input type="text" id="` + href + `" placeholder="">
@@ -38,43 +42,102 @@ export class TagBox {
         `
         this.ul = this.divEl.querySelector("ul") as HTMLUListElement,
         this.input = this.divEl.querySelector("input") as HTMLInputElement,
+        this.input.addEventListener("keyup", this.addTagEvent.bind(this));
 
         this.tags = new Map<string, Tag>();
         this.maxTags = 10,
+
+        // We pull the tags that exist already from db
+        // We add to this list from our hardcoded values
         BackendNotifier.getStorageTags(this.href).then(tagsString => {
             this.tags = new Map(Object.entries(JSON.parse(tagsString)));
-            let tagsToAddUploader: Map<string, Tag> = this.addUploaderTags(uploader)
-            let tagsToAddCategory: Map<string, Tag> = this.addCategoryTags(songname)
-
-            let tagsToAdd = new Map ([...tagsToAddUploader, ...tagsToAddCategory])
+            let tagsToAdd: Map<string, Tag> = this.parseData(songname, uploader)
+            if(inPlaylist) tagsToAdd.set("INPLAYLIST", new Tag("metadata"));
             this.addTags(tagsToAdd);
         })
-        this.input.addEventListener("keyup", this.addTagEvent.bind(this));
     }
 
 
-
-    addCategoryTags(songName: string) {
+    parseData(songname: string, uploader: string) {
         let tagsToAdd = new Map<string, Tag>();
-        const nightcoreRegex = new RegExp('nightcore', 'i')
-        if (nightcoreRegex.test(songName)) tagsToAdd.set("Nightcore", new Tag("category"));
         
-        const tanocRegex = new RegExp('usao|dj noriken|ko3|Massive New Krew|REDALiCE|Laur|kors k|Srav3R|aran|Hommarju|DJ Genki|DJ Myosuke|t\+pazolite|RoughSketch|Kobaryo|P\*Light|nora2r|Relect|Getty|Tatsunoshin', 'i')
-        if (tanocRegex.test(songName)) tagsToAdd.set("Tano*C", new Tag("category"));
-        return tagsToAdd; 
-    }
-    addUploaderTags(uploader: string) {
-        let tagsToAdd = new Map<string, Tag>();
-        const topicRegex = new RegExp(' - Topic', 'i')
+        /*******************************************************************
+         *       Regex to parse song name and get extra information        *
+         *******************************************************************/  
+        /* Regex to parse song name and get extra information*/
+        const nightcoreRegex = new RegExp('nightcore', 'i')
+        if (nightcoreRegex.test(songname)) tagsToAdd.set("Nightcore", new Tag("category"));
+        
+        const tanocRegex = new RegExp('usao|dj noriken|ko3|Massive New Krew|REDALiCE|Laur|kors k|Srav3R|aran|Hommarju|DJ Genki|DJ Myosuke|t\\+pazolite|RoughSketch|Kobaryo|P\\*Light|nora2r|Relect|Getty|Tatsunoshin', 'i')
+        if (tanocRegex.test(songname)) tagsToAdd.set("TANO*C", new Tag("category"));
 
+        const mikuRegex = new RegExp('Miku|ミク', 'i')
+        if (mikuRegex.test(songname)) tagsToAdd.set("ミク", new Tag("vocaloid"));
+
+        const kafuRegex = new RegExp('Kafu|可不', 'i')
+        if (kafuRegex.test(songname)) tagsToAdd.set("可不", new Tag("vocaloid"));
+
+        const slaveRegex = new RegExp('Slave\.V-V-R', 'i')
+        if (slaveRegex.test(songname)) tagsToAdd.set("Slave.V-V-R", new Tag("vocaloid"));
+
+        const iaRegex = new RegExp('IA')
+        if (iaRegex.test(songname)) tagsToAdd.set("IA", new Tag("vocaloid"));
+
+        const touhouRegex = new RegExp('東方|Touhou', 'i')
+        if (touhouRegex.test(songname)) tagsToAdd.set("東方", new Tag("category"))
+
+        const khRegex = new RegExp('Kingdom Hearts', 'i')
+        if (khRegex.test(songname)) tagsToAdd.set("Kingdom Hearts", new Tag("game"))
+
+
+
+
+        /*******************************************************************
+         *   Regex to do with parsing uploader and trying to find artist   *
+         *******************************************************************/  
+
+        // Regex to parse song name and deduce artist 
+        // const dashRegex = new RegExp('(.*?) -.*')
+        // var result: RegExpMatchArray = songname.match(dashRegex) as RegExpMatchArray;
+        // if(result) {
+        //     tagsToAdd.set(result[1], new Tag("artist"))
+        // }
+        // console.log(result[1])
+
+        // Case 1 - Found artist through topic
+        const topicRegex = new RegExp(' - Topic', 'i')
         if (topicRegex.test(uploader)) {
             tagsToAdd.set(uploader.slice(0, -8), new Tag("artist"));
-        } else {
-            tagsToAdd.set(uploader, new Tag("uploader"));
+            return tagsToAdd;
         }
+
+        // Case 2 - Found artist by removing Official
+        const officialRegex = new RegExp('(.*?) Official', 'i')
+        result = uploader.match(officialRegex) as RegExpMatchArray;
+        if(result){
+            tagsToAdd.set(result[1], new Tag("artist"))
+            return tagsToAdd;
+        }
+
+        // Case 3 - Found artist by removing \
+        const slashRegex = new RegExp('(.*?) \/')
+        var result: RegExpMatchArray = uploader.match(slashRegex) as RegExpMatchArray;
+        if(result) {
+            tagsToAdd.set(result[1], new Tag("artist"))
+            return tagsToAdd;
+        }
+ 
+        // Case 4 - Found artist as entry exists in song name and uploader
+        const uploaderInSongNameRegex = new RegExp(uploader, 'i')
+        if (uploaderInSongNameRegex.test(songname)) {
+            tagsToAdd.set(uploader, new Tag("artist"));
+            return tagsToAdd;
+        }
+        
+        // Case 5 - Return uploader only.. artist not found
+        tagsToAdd.set(uploader, new Tag("uploader"));
         return tagsToAdd;
     }
-
 
 
     // Reads input field and adds the tag
@@ -89,28 +152,24 @@ export class TagBox {
 
     // We use this map to enable bulk updates instead of one by one whenever a change occurs
     addTags(tagsToAdd: Map<string, Tag>) {
-        let hasNewTag = false;
+        let newTag = false;
         tagsToAdd.forEach((value, key) => {
-            hasNewTag = this.addTag(key, value.type);
+            newTag = this.addTag(key, value.type);
         })
         
-        if(hasNewTag) {
-            BackendNotifier.updateTagsForSong(this.href, this.tags);
-        }
-        this.rebuildTags(); // Need to do this for first time only to create tags on frontend
+        if(newTag) { BackendNotifier.updateTagsForSong(this.href, this.tags); }
+        this.rebuildTags();                                         // Need to do this for first time only to create tags on frontend
     }
 
     addTag(tagName: string, type: string = "default"): boolean {
         // Can have up to 10 tags. No duplicates. Minimum length = 1
-        let hasNewTag = false;
+        let newTag = false;
         if(tagName.length > 1 && !this.tags.has(tagName)){
-            hasNewTag = true;
-            // console.log(tagName + "is new!");
+            newTag = true;
             if(this.tags.size >= 10) return false; 
             this.tags.set(tagName, new Tag(type));
         }
-        return hasNewTag;
-        console.log(this.tags)
+        return newTag;
     }
 
 

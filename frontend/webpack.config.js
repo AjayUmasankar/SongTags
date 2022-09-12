@@ -10,6 +10,7 @@ module.exports = [
     // Before we had imports/exports, we manually injected all our non-modules files (they had no export/import)
     // Hence, our files were  able to refer to another files class (e.g. AddTagBoxes to TagBox component) without an import
     // This happened because https://stackoverflow.com/questions/69416097/what-does-a-file-without-any-top-level-import-or-export-declarations-is-treated
+    mode: 'development',                // Maybe can use this to automatically adjust the backend url we are connecting to
     entry: ["./src/AddTagBoxes.ts",
     "./src/components/AddTagButton/AddTagButton.scss"],
             // "./extension/external_modules/bootstrap-5.1.3/js/bootstrap.js"], 

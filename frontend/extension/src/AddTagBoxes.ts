@@ -2,14 +2,16 @@ import { TagBox } from './components/TagBox/TagBox';
 
 const delay = (t:number) => new Promise(resolve => setTimeout(resolve, t));
 
-window.onload = () => main();
-
-async function main() {
-    console.log("Window Loaded!", Date.now());
-    //const userToTags = await initializeMongoDB();
-    delay(1000).then(() => {initializeTagBoxes(); })
-    //delay(1000).then(() => initializeTagBoxes());
+window.onload = () => {
+    console.log("Song Panes Loaded!", Date.now());
+    delay(1000).then(() => { initializeTagBoxes(); })
+    startHrefObserver(window.location.href);
     return;
+} 
+
+/*
+async function main() {
+
 
     // Tried to obeserve the playlist items loading in but.. its a 50/50 on whether our code loads first or theirs!
     const playListElementsHolder = document.querySelector('div ytd-item-section-renderer');
@@ -39,10 +41,72 @@ async function main() {
     // }) 
     // observer.observe(popUpElement, observerOptions);
 }
+*/
+
 
 function initializeTagBoxes() {
-    console.log("Song Panes Loaded!", Date.now());
+    const currentUrl: string = window.location.href;
+
+    const playlistRegex: RegExp = new RegExp('youtube\.com\/playlist\\?list=', 'i')
+    if (playlistRegex.test(currentUrl)) addTagBoxesToPlaylistItems()
+    const playlistSongRegex: RegExp = new RegExp('youtube.com/watch\\?v=(.*)\&list=', 'i')
+    // console.log(currentUrl);
+    if (playlistSongRegex.test(currentUrl)) addTagBoxesToPlaylistSong()
+}
+
+function startHrefObserver(currenthref: string) {
+    var bodyList = document.querySelector("body") as HTMLBodyElement;
+
+    var observer = new MutationObserver(function(mutations) {
+        mutations.forEach(function(mutation) {
+            if (currenthref != window.location.href) {
+                currenthref = window.location.href;
+                /* Changed ! your code here */
+                delay(5000).then(() => {
+                    deleteTagBoxes();
+                    initializeTagBoxes();
+                })
+            }
+        });
+    });
     
+    var config = {
+        childList: true,
+        subtree: true
+    };
+    
+    observer.observe(bodyList, config);
+}
+
+function deleteTagBoxes() {
+    const tagBoxWrappers = document.querySelectorAll('.tagboxwrapper') as NodeListOf<Element>;
+    for (const element of tagBoxWrappers) {
+        element.remove();
+    }
+}
+
+function addTagBoxesToPlaylistSong() {
+    const watchFlexyEl = document.querySelector("ytd-watch-flexy") as HTMLElement;
+    const primaryEl = watchFlexyEl.querySelector("div > div") as HTMLDivElement;
+
+    primaryEl.querySelector("div.watch-active-metadata div:nth-child(2)")
+    const descriptionHolderEl = primaryEl.querySelector("div#content") as HTMLDivElement;
+    // const columnsEl = primaryEl.parentElement as HTMLDivElement;
+    // columnsEl.style.margin = '0px';
+    // columnsEl.insertBefore(tagBoxEl.divEl, columnsEl.firstChild);
+
+
+    var channelNameEl = primaryEl.querySelector("div.style-scope ytd-channel-name div div yt-formatted-string a") as HTMLAnchorElement;
+
+    var songNameEl = primaryEl.querySelector("h1 yt-formatted-string") as HTMLElement;
+
+
+    const tagBoxEl = new TagBox(parseHref(window.location.href), channelNameEl.innerText, songNameEl.innerText, true)
+    descriptionHolderEl.appendChild(tagBoxEl.divEl);
+
+}
+
+function addTagBoxesToPlaylistItems() {
     // Traversing the Actual Song Panes
     const songPanes: NodeList = document.querySelectorAll("div ytd-playlist-video-renderer"); 
     songPanes.forEach((songPane) => {
@@ -66,60 +130,23 @@ function initializeTagBoxes() {
         const metaDataEl = metaEl.children[1].children[0] as HTMLDivElement;
         const channelNameContainerEl = metaDataEl.children[0].children[0].children[0] as HTMLDivElement;
         const channelNameEl = channelNameContainerEl.children[0].children[0].children[0] as HTMLAnchorElement;
-        // console.log(channelNameEl.innerText)
 
         const songNameEl = metaEl.children[0].children[1] as HTMLAnchorElement
-        // console.log(songNameEl);
-        // console.log(songNameEl.innerText)
 
 
 
-        const tagBoxEl = new TagBox(parseHref(anchorEl.href), channelNameEl.innerText, songNameEl.innerText)
+
+        const tagBoxEl = new TagBox(parseHref(anchorEl.href), channelNameEl.innerText, songNameEl.innerText, true)
         contentEl.appendChild(tagBoxEl.divEl);
     })
 }
 
+
 function parseHref(href: string) {
-    const regexp: RegExp = /watch\?v=(.*)&list/i;
+    console.log(href)
+    const regexp: RegExp = /watch\?v=(.*?)\&/i;
     const result: RegExpMatchArray = href.match(regexp) as RegExpMatchArray;
+    console.log(result[1])
     return result[1];
 }
 
-
-
-/*
-function popUpInitialized(dropDownNode: Node) {
-    console.log("Popup initialized!");
-
-    // console.log(dropDownNode);
-    // console.log(dropDownNode.childNodes[1]);
-    // console.log(dropDownNode.childNodes[1].firstElementChild)
-    // console.log(dropDownNode.childNodes[1].firstElementChild.firstElementChild);
-
-    let someEl = dropDownNode.childNodes[1] as Element
-
-    let dropDownMenu = ((someEl.firstElementChild as Element).firstElementChild as Element);
-    console.log(dropDownMenu);
-    let dropDownMenuItems = dropDownMenu.children;
-    console.log(dropDownMenuItems);
-
-    let saveToPlaylist = dropDownMenuItems[2];
-    console.log(saveToPlaylist);
-    let cloned = saveToPlaylist.cloneNode();
-    console.log(saveToPlaylist.insertAdjacentElement('afterend', cloned as Element));
-    // console.log(saveToPlaylist);
-}
-
-// Checks script injection status by clicking on button 
-let btn = document.getElementById('checkExtensionPerms');
-btn.addEventListener('click', (event) => {
-    console.log('Clicked button in categories.js!');
-    chrome.tabs.getCurrent((tab) => {
-        console.log(tab);
-        console.log("Injected script into: " + tab.url + "!");
-    })
-    // .then((res) => {
-    //     console.log(res);
-    // });
-})
-*/

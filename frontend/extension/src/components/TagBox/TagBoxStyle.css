@@ -11,18 +11,18 @@
   color: #fff;
   background: #5372F0;
 }
-.wrapper{
-  width: 560px;
+.tagboxwrapper {
+  width: auto;
   /* padding: 5px 5px 5px; */
   height: 100%;
   /* justify-content:center; */
 }
-.wrapper :where(.title, li, li i, .details){
+/* .tagboxwrapper :where(.title, li, li i, .details){
   display: flex;
   align-items: center;
-}
+} */
 
-.wrapper .content{
+.tagboxwrapper .tagbox{
   /* margin: 10px 0; */
   display: flex;
   flex-direction: row;
@@ -30,7 +30,7 @@
   align-items: flex-end;
 }
 
-.content ul {
+.tagbox ul {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
@@ -39,7 +39,7 @@
   /* border: 0px solid #a6a6a6; */
 }
 
-.content ul li {
+.tagbox ul li {
   color: floralwhite;
   margin: 3px 3px 3px 8px;
   list-style: none;
@@ -65,24 +65,28 @@
   border-end-end-radius: 8px;
 }
 
-.content ul li.uploader {
-  /* border-left-color: brown */
+
+.tagbox ul li.uploader {
+  border-left-color:slategray
 }
 
-.content ul .uploader {
-  border-left-color: brown
+.tagbox ul li.artist {
+  border-left-color:firebrick;
 }
 
-.content ul li.artist {
-  border-left-color: cornflowerblue;
-}
-
-.content ul li.category {
+.tagbox ul li.category {
   border-left-color: indigo;
 }
 
+.tagbox ul li.vocaloid {
+  border-left-color:dodgerblue
+}
 
-.wrapper .details{
+.tagbox ul li.metadata {
+  display: none;
+}
+
+/* .tagboxwrapper .details{
   justify-content: space-between;
 }
 .details button{
@@ -99,11 +103,11 @@
 
 .details button:hover{
   background: #2c52ed;
-}
+} */
 
 
 /* https://stackoverflow.com/questions/22390272/how-to-create-a-label-with-close-icon-in-bootstrap */
-.tag {
+/* .tag {
   font-size: 12px;
   padding: 0.3em 0.4em 0.3em;
   margin: 2px 1px !important;
@@ -127,9 +131,9 @@
   cursor: pointer;
   opacity: 0.6;
   margin: 0 0 0 0.3em;
-}
+} */
 
-.tag a:hover {
+/* .tag a:hover {
   opacity: 1.0;
 }
 
@@ -141,4 +145,17 @@
 .tag .remove {
   vertical-align: bottom;
   top: 0;
+} */
+
+
+/******* On the watch?v= actual song paeg ******/
+div#description + div.tagboxwrapper {
+  margin: 0px 0px 8px 0px;
+  display:flex;
+  flex-direction: row;
+  justify-content: flex-start;
 }
+
+/* div.style-scope div.tagboxwrapper {
+  margin: 15px, 0px, 0px, 0px;
+} */

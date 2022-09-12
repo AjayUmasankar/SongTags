@@ -9,6 +9,7 @@ import motor.motor_asyncio
 import pprint
 import time
 import requests
+from typing import Optional
 
 
 
@@ -22,9 +23,16 @@ db = client.songtags
 songTagsCol = db["songtags"] 
 
 
-# this is needed as we are recieving a request from youtube.com origin to our backend
-# the backend needs to say that it will accept requests from that verified origin
-
+# This is called at the start of every request
+@app.middleware("http")
+async def add_process_time_header(request: Request, call_next):
+    start_time = time.time()
+    await getUserDict("ajay")
+    response = await call_next(request)
+    process_time = time.time() - start_time
+    response.headers["X-Process-Time"] = str(process_time)
+    return response
+    
 
 class PyObjectId(ObjectId):
     @classmethod
@@ -43,12 +51,23 @@ class PyObjectId(ObjectId):
 
 
 
+class Tag(BaseModel):
+    type: str = Field(...)
+
+    class Config:
+        arbitrary_types_allowed: True
+
+class TagDict(BaseModel):
+    __root__: dict[str, Tag]
+
+    class Config:
+        arbitrary_types_allowed: True
 
 class UserModel(BaseModel):
     id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
     username: str = Field(...)
-    hrefs: dict[str, list[str]] 
-
+    # hrefs: dict[str, TagDict] 
+    hrefs: dict[str, dict[str, Tag]]
     class Config:
         allow_population_by_field_name = True
         arbitrary_types_allowed = True
@@ -58,14 +77,15 @@ class UserModel(BaseModel):
                 "$oid": "62fc7d0e1bc9453e6a6424d6"
             },
             "hrefs": {
-                "KmDQuwJWs84": [
-                    "nightcore",
-                    "usao",
-                    "crazybeat"
-                ],
-                "testHref": [
-                    "testtag"
-                ]
+                "KmDQuwJWs84": {
+                    "ztrot": {"type": "uploader"},
+                    "nightcore": {"type": "category"}
+                },
+                "cyWg_kuLmMA": {
+                    "USAO": {"type": "artist"},
+                    "INPLAYLIST": {"type": "metadata", "result": "false"}
+
+                },
             },
             "username": "bjay"
         }
@@ -81,68 +101,35 @@ async def getUserDict(username: str):
     userDict = loads(userJson)
 
 
-@app.middleware("http")
-async def add_process_time_header(request: Request, call_next):
-    start_time = time.time()
-    await getUserDict("ajay")
-    response = await call_next(request)
-    process_time = time.time() - start_time
-    response.headers["X-Process-Time"] = str(process_time)
-    return response
-    
 
 @app.get("/user/{username}", description="Returns the user and all of their tags", response_model=UserModel)
 async def getUser(username: str):
     return await songTagsCol.find_one({"username": username}, {'_id': 0})
-    return userDict
-    return await getUserDict(username)
 #     raise HTTPException(status_code=404, detail=f"Student {id} not found")
 
 
-class Tag(BaseModel):
-    type: str = Field(...)
 
-    class Config:
-        arbitrary_types_allowed: True
-
-class TagDict(BaseModel):
-    __root__: dict[str, Tag]
-
-    class Config:
-        arbitrary_types_allowed: True
 
 @app.get("/tags/{username}/{href}", description="Returns a list of tags for the specified song", response_model=TagDict)
 async def getTags(username:str, href: str, request: Request):
-    hrefs = userDict["hrefs"]
+    
+    hrefs = userDict.get("hrefs")
     tags = {}
-    if href in [*hrefs]:
+    if hrefs is not None and href in [*hrefs]:
         tags = userDict["hrefs"][href]
 
-    if(isinstance(tags, list)):
-        print("this one is still a list")
-        newmap = {}
-        for tag in tags:
-            newmap[tag] = { "type": "default" }
-        tags = newmap
-    
-    # createAuthorTag = True;
-    # for [key, value] in tags:
-    #     if value.type == "author":
-    #         createAuthorTag = False;
-
+    # if(isinstance(tags, list)):
+    #     print("this one is still a list")
+    #     newmap = {}
+    #     for tag in tags:
+    #         newmap[tag] = { "type": "default" }
+    #     tags = newmap
     return tags
 
 
 @app.post("/tags/{username}/{href}", description="Sets the list of tags for the song", response_description="Tags successfully set")
 async def setTags(username:str, href: str, request: Request):
     tags = await request.json() # gets the body
-
-    # WE ALSO NEED TO CORRECTLY CATEGORIZE ALL TAGS HERE
-    hrefs = (userDict["hrefs"]) # is a dictionary
-    if href not in [*hrefs]:
-        userDict['hrefs'][href] = []
-    else:
-        userDict['hrefs'][href] = tags
 
     usertoupdate = { "username" : username }
     newvalues = { "$set": 
@@ -156,22 +143,3 @@ async def setTags(username:str, href: str, request: Request):
 
     songTagsCol.update_one( usertoupdate, newvalues, upsert=True)
     return JSONResponse(status_code=status.HTTP_201_CREATED, content=tags)
-
-# http://127.0.0.1:8000/addtag/ajay/testHref/testtag
-# @app.post("/tags/{username}/{href}/{tag}", description="Adds a single tag to a song", response_description="Tag successfully added")
-# async def addTag(username:str, href: str, tag: str):
-    # userDict = await getUserDict(username); # songTagsCol.find_one({"username": username})
-    # hrefs = (userDict["hrefs"]) # is a dictionary
-    # if href not in [*hrefs]:
-    #     userDict['hrefs'][href] = []
-    # tags = hrefs[href]
-    # if tag not in tags:
-    #     tags.append(tag)
-
-    # usertoupdate = { "username" : username }
-    # newvalues = { "$set": { "hrefs": { href: tags } }}
-
-    # songTagsCol.update_one(usertoupdate, newvalues)
-    # return JSONResponse(status_code=status.HTTP_201_CREATED, content=tags)
-
-

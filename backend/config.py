@@ -12,6 +12,8 @@ class Settings(BaseSettings):
 settings = Settings()
 
 # Setup CORS
+# this is needed as we are recieving a request from youtube.com origin to our backend
+# the backend needs to say that it will accept requests from that verified origi
 # This is a list of URLs that will be authorized to connect to our backend
 corsOrigins = [
     "http://localhost.tiangolo.com",

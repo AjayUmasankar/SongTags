@@ -35,6 +35,7 @@ https://stackoverflow.com/questions/42159175/connecting-heroku-app-to-atlas-mong
 *****************JS LEARNINGS ******************
 this.divEl.addEventListener("click", (evt: any) => evt.stopPropagation()); so that parent element event handlers arent called
 
+The total width of the label element is equivalent to the textbox that it covers! Their width animations also match, making it seamless!
 
 *****************TYPESCRIPT LEARNINGS*****************
 In TypeScript, just as in ECMAScript 2015, any file containing a top-level import or export is considered a module. 
@@ -44,7 +45,9 @@ in the global scope (and therefore to modules as well).
 auto compile into js files on save. CtrlShiftB and select tsc: watch - tsconfig.json
 https://stackoverflow.com/questions/29996145/visual-studio-code-compile-on-save
 
-regex syntax
+regex syntax. need to fucking escape ? with two \\ 
+
+query selector in AddTagboxes soo useful
 
 `npx tsc` does type checking `npx tsc --watch`
 
