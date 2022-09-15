@@ -7,33 +7,18 @@ DATABASE_URL="mongodb+srv://<username>:<password>@songtags.o5vngfj.mongodb.net/t
 PORT=8000
 ```
 
-Then, configure frontend to point to local backend
+Then, configure frontend to point to local backend\
 You will need to change the URL in BackendNotifier.ts
 ```
 static tagsResource: string = "http://127.0.0.1:8000/tags/ajay/"
 ```
 
-
-# Install Requirements (w/ venv) 
+# Quickstart Backend Server
 ```
 cd /frontend/
 npm run backendinstall
-```
-
-# Launch Backend Webserver (w/ automatic reload on code change via Uvicorn)
-Go to /frontend/
-```bash
 npm run backendstart
 ```
-
-
-~~~Alternatively, we can use Heroku Local but there wont be any debug output
-```
-.\\.venv\Scripts\activate
-heroku local web -f Procfile.windows
-```
-~~~
-
 
 
 # Deployment to Heroku

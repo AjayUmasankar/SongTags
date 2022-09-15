@@ -1,11 +1,11 @@
-import { Tag } from './TagBox/TagBox'
+import { TagData } from './TagBox/TagBox'
 
 export class BackendNotifier {
-    // static tagsResource: string = "https://songtagsbackend.herokuapp.com/tags/ajay/"
-    static tagsResource: string = "http://127.0.0.1:8000/tags/ajay/"
+    static tagsResource: string = "https://songtagsbackend.herokuapp.com/tags/ajay/"
+    // static tagsResource: string = "http://127.0.0.1:8000/tags/ajay/"
 
 
-    static async updateTagsForSong(href: string, tags: Map<string, Tag>) {
+    static async updateTagsForSong(href: string, tags: Map<string, TagData>) {
         const es6maptojson = JSON.stringify(Object.fromEntries(tags.entries()))
         return await fetch(BackendNotifier.tagsResource+href, {
             method: 'POST',

@@ -43,17 +43,6 @@ async function main() {
 }
 */
 
-
-function initializeTagBoxes() {
-    const currentUrl: string = window.location.href;
-
-    const playlistRegex: RegExp = new RegExp('youtube\.com\/playlist\\?list=', 'i')
-    if (playlistRegex.test(currentUrl)) addTagBoxesToPlaylistItems()
-    const playlistSongRegex: RegExp = new RegExp('youtube.com/watch\\?v=(.*)\&list=', 'i')
-    // console.log(currentUrl);
-    if (playlistSongRegex.test(currentUrl)) addTagBoxesToPlaylistSong()
-}
-
 function startHrefObserver(currenthref: string) {
     var bodyList = document.querySelector("body") as HTMLBodyElement;
 
@@ -62,7 +51,7 @@ function startHrefObserver(currenthref: string) {
             if (currenthref != window.location.href) {
                 currenthref = window.location.href;
                 /* Changed ! your code here */
-                delay(5000).then(() => {
+                delay(4000).then(() => {
                     deleteTagBoxes();
                     initializeTagBoxes();
                 })
@@ -78,6 +67,17 @@ function startHrefObserver(currenthref: string) {
     observer.observe(bodyList, config);
 }
 
+function initializeTagBoxes() {
+    const currentUrl: string = window.location.href;
+
+    const playlistRegex: RegExp = new RegExp('youtube\.com\/playlist\\?list=', 'i')
+    if (playlistRegex.test(currentUrl)) addTagBoxesToPlaylistItems()
+    const playlistSongRegex: RegExp = new RegExp('youtube.com/watch\\?v=(.*)\&list=', 'i')
+    // console.log(currentUrl);
+    if (playlistSongRegex.test(currentUrl)) addTagBoxesToPlaylistSong()
+}
+
+
 function deleteTagBoxes() {
     const tagBoxWrappers = document.querySelectorAll('.tagboxwrapper') as NodeListOf<Element>;
     for (const element of tagBoxWrappers) {
@@ -91,23 +91,24 @@ function addTagBoxesToPlaylistSong() {
 
     primaryEl.querySelector("div.watch-active-metadata div:nth-child(2)")
     const descriptionHolderEl = primaryEl.querySelector("div#content") as HTMLDivElement;
-    // const columnsEl = primaryEl.parentElement as HTMLDivElement;
-    // columnsEl.style.margin = '0px';
-    // columnsEl.insertBefore(tagBoxEl.divEl, columnsEl.firstChild);
 
+    const channelNameEl = primaryEl.querySelector("div.style-scope ytd-channel-name div div yt-formatted-string a") as HTMLAnchorElement;
 
-    var channelNameEl = primaryEl.querySelector("div.style-scope ytd-channel-name div div yt-formatted-string a") as HTMLAnchorElement;
+    const songNameEl = primaryEl.querySelector("h1 yt-formatted-string") as HTMLElement;
 
-    var songNameEl = primaryEl.querySelector("h1 yt-formatted-string") as HTMLElement;
+    // The retrieved element has parent yt-* which has parent h3. The retrieved element also has attribute href which starts with /playlist
+    const playlistNameEl = document.querySelector('h3 yt-formatted-string a[href^="/playlist"]') as HTMLAnchorElement;
 
-
-    const tagBoxEl = new TagBox(parseHref(window.location.href), channelNameEl.innerText, songNameEl.innerText, true)
+    const tagBoxEl = new TagBox(parseHref(window.location.href), channelNameEl.innerText, songNameEl.innerText, playlistNameEl.innerText)
     descriptionHolderEl.appendChild(tagBoxEl.divEl);
 
 }
 
 function addTagBoxesToPlaylistItems() {
     // Traversing the Actual Song Panes
+    const displayDialogEl = document.querySelectorAll('#display-dialog')[0] as HTMLDivElement;
+    // console.log(playlistNameEl);
+    // console.log(playlistNameEl.innerText);
     const songPanes: NodeList = document.querySelectorAll("div ytd-playlist-video-renderer"); 
     songPanes.forEach((songPane) => {
         let songPaneEl = songPane as Element;
@@ -132,21 +133,18 @@ function addTagBoxesToPlaylistItems() {
         const channelNameEl = channelNameContainerEl.children[0].children[0].children[0] as HTMLAnchorElement;
 
         const songNameEl = metaEl.children[0].children[1] as HTMLAnchorElement
+        const playlistNameEl = displayDialogEl.children[1] as HTMLElement;
 
 
-
-
-        const tagBoxEl = new TagBox(parseHref(anchorEl.href), channelNameEl.innerText, songNameEl.innerText, true)
+        const tagBoxEl = new TagBox(parseHref(anchorEl.href), channelNameEl.innerText, songNameEl.innerText, playlistNameEl.innerText)
         contentEl.appendChild(tagBoxEl.divEl);
     })
 }
 
 
 function parseHref(href: string) {
-    console.log(href)
     const regexp: RegExp = /watch\?v=(.*?)\&/i;
     const result: RegExpMatchArray = href.match(regexp) as RegExpMatchArray;
-    console.log(result[1])
     return result[1];
 }
 
