@@ -48,37 +48,44 @@ export class TagBox {
         // let tagBoxDiv: Element = document.createElement('DIV');
         this.playlistName = playlistName;
         this.href = href; 
-        this.divEl = document.createElement('DIV');
-        this.divEl.classList.add("tagboxwrapper");
-        this.divEl.addEventListener("click", (evt: any) => evt.stopPropagation()); // Or else we trigger youtubes click handler and enter the song
-        this.divEl.innerHTML =
-        `
-        <div class = "tagbox">
-            <ul> 
-            <div class="text-input">
-            <input type="text" id="` + href + `" placeholder="">
-            <label for="` + href + `" class=taglabel>+</label>
-            </div>
-            </ul>
-        </div>
-        `
-        this.ul = this.divEl.querySelector("ul") as HTMLUListElement,
-        this.input = this.divEl.querySelector("input") as HTMLInputElement,
-        this.input.addEventListener("keyup", this.addTagFromUser.bind(this));
-
         this.tags = new Map<string, TagData>();
         this.maxTags = 10,
 
-        // We pull the tags that exist already from db
-        // We add to this list from our hardcoded values
-        BackendNotifier.getStorageTags(this.href).then(tagsString => {
-            let backendTags: Map<string, TagData> = new Map(Object.entries(JSON.parse(tagsString)));
-            let automatedTags: Map<string, TagData> = this.parseData(songname, uploader, playlistName)
-            // this.addTags(new Map([backendTags, ...automatedTags]));
-            this.tags = backendTags;
-            this.addTags(automatedTags);
-            this.rebuildTags();             // needed for first runthrough
-        })
+        this.divEl = document.createElement('DIV');
+        if(playlistName === "Watch later") {
+            this.ul = document.createElement('ul') as HTMLUListElement;
+            this.input = document.createElement('input');
+        } else {
+            this.divEl.classList.add("tagboxwrapper");
+            this.divEl.addEventListener("click", (evt: any) => evt.stopPropagation()); // Or else we trigger youtubes click handler and enter the song
+            this.divEl.innerHTML =
+            `
+            <div class = "tagbox">
+                <ul> 
+                <div class="text-input">
+                <input type="text" id="` + href + `" placeholder="">
+                <label for="` + href + `" class=taglabel>+</label>
+                </div>
+                </ul>
+            </div>
+            `
+            this.ul = this.divEl.querySelector("ul") as HTMLUListElement,
+            this.input = this.divEl.querySelector("input") as HTMLInputElement,
+            this.input.addEventListener("keyup", this.addTagFromUser.bind(this));
+
+
+
+            // We pull the tags that exist already from db
+            // We add to this list from our hardcoded values
+            BackendNotifier.getStorageTags(this.href).then(tagsString => {
+                let backendTags: Map<string, TagData> = new Map(Object.entries(JSON.parse(tagsString)));
+                let automatedTags: Map<string, TagData> = this.parseData(songname, uploader, playlistName)
+                // this.addTags(new Map([backendTags, ...automatedTags]));
+                this.tags = backendTags;
+                this.addTags(automatedTags);
+                this.rebuildTags();             // needed for first runthrough
+            })
+        }
     }
 
 
@@ -86,6 +93,17 @@ export class TagBox {
         let tagsToAdd = new Map<string, TagData>();
         let artistFound: boolean = false; 
         
+        /*******************************************************************
+         *                 Regex to parse playlist name                    *
+         *******************************************************************/  
+        const OSTPlaylistRegex = new RegExp('Game/TV/Movie OST')
+        if (OSTPlaylistRegex.test(playlistName)) tagsToAdd.set("OST", new TagData("category"));
+
+        const classicsPlaylistRegex = new RegExp('^Classics$')
+        if (classicsPlaylistRegex.test(playlistName)) tagsToAdd.set("ᛄᛄᛄᛄᛄ", new TagData("GOAT"));
+
+        tagsToAdd.set("INPLAYLIST", new TagData ("metadata"));
+
         /*******************************************************************
          *       Regex to parse song name and get extra information        *
          *******************************************************************/  
@@ -138,16 +156,7 @@ export class TagBox {
         if (animeMatch) {tagsToAdd.set(animeMatch[1].trim(), new TagData("anime")); artistFound = true;}
         
 
-        /*******************************************************************
-         *                 Regex to parse playlist name                    *
-         *******************************************************************/  
-        const OSTPlaylistRegex = new RegExp('Game/TV/Movie OST')
-        if (OSTPlaylistRegex.test(playlistName)) tagsToAdd.set("OST", new TagData("category"));
 
-        const classicsPlaylistRegex = new RegExp('^Classics$')
-        if (classicsPlaylistRegex.test(playlistName)) tagsToAdd.set("ᛄᛄᛄᛄᛄ", new TagData("GOAT"));
-
-        tagsToAdd.set("INPLAYLIST", new TagData ("metadata"));
 
         /*******************************************************************
          *      Regex to parse uploader name (and try to find artist)      *
@@ -187,7 +196,6 @@ export class TagBox {
 
         // Case 5 - Found artist that has まふまふちゃんねる
         const ちゃんねるInUploaderNameRegex = new RegExp('(.*?)ちゃんねる', 'i')
-        console.log(uploader)
         var result: RegExpMatchArray = uploader.match(ちゃんねるInUploaderNameRegex) as RegExpMatchArray;
         if (result) {
             tagsToAdd.set(result[1], new TagData("artist"));

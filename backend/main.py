@@ -62,6 +62,17 @@ class TagDict(BaseModel):
 
     class Config:
         arbitrary_types_allowed: True
+        schema_extra = {
+            "tag1": {
+                "type": "tagtyp1"
+            },
+            "Nightcore": {
+                "type": "category"
+            },
+            "ミク": {
+                "type": "vocaloid"
+            }
+        }
 
 class UserModel(BaseModel):
     id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
@@ -106,8 +117,6 @@ async def getUserDict(username: str):
 async def getUser(username: str):
     return await songTagsCol.find_one({"username": username}, {'_id': 0})
 #     raise HTTPException(status_code=404, detail=f"Student {id} not found")
-
-
 
 
 @app.get("/tags/{username}/{href}", description="Returns a list of tags for the specified song", response_model=TagDict)

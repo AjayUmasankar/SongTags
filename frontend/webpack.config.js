@@ -12,12 +12,12 @@ module.exports = [
     // This happened because https://stackoverflow.com/questions/69416097/what-does-a-file-without-any-top-level-import-or-export-declarations-is-treated
     mode: 'development',                // Maybe can use this to automatically adjust the backend url we are connecting to
     entry: ["./src/AddTagBoxes.ts",
-    "./src/components/AddTagButton/AddTagButton.scss"],
+    "./src/components/TagAddButton/TagAddButton.scss"],
             // "./extension/external_modules/bootstrap-5.1.3/js/bootstrap.js"], 
     context: path.resolve(__dirname, 'extension'),
     output: {
       path: path.resolve(__dirname, "extensionbuilt"),
-      filename: "[name].js",
+      filename: "[name].js",            // This JS file doesnt include our compiled scss, so we need to load that separately in manifest.json too
       publicPath: ''                    // or else some webpack related error occurs in browser
     },
     devtool: 'inline-source-map',       // This is actually cracked. Even though compilation results in one main.js, debugging in dev tools shows just your file .e.g TagBox
@@ -37,8 +37,9 @@ module.exports = [
           test: /\.scss$/,
           use: [                                            // loaders are executed from bottom to top
             {
-                loader: 'file-loader',                      // Think we use this just to move our css files
+                loader: 'file-loader',                      // Or else webpack will complain about syntax everywhere
                 options: { name: '[path][name].css'}        // this is meant to be .min.cs
+                                                            
             },
             'sass-loader'
           ]

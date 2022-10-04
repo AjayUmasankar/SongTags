@@ -37,6 +37,17 @@ this.divEl.addEventListener("click", (evt: any) => evt.stopPropagation()); so th
 
 The total width of the label element is equivalent to the textbox that it covers! Their width animations also match, making it seamless!
 
+    // The retrieved element has parent yt-* which has parent h3. The retrieved element also has attribute href which starts with /playlist
+    const playlistNameEl = document.querySelector('h3 yt-formatted-string a[href^="/playlist"]') as HTMLAnchorElement;
+
+    border-inline is the left and right. border-inline-start is the left
+    border-block is the top and down. border-block-start is the top
+
+    if youre messing around with width and height of div elements. 
+    its important to know that the constraint doesnt have to be set on the top level divs
+    you may have to follow the child elements down to see where the width/height constraint is set
+    this is because the parent div elements adjust to fit the small object that has height/width set on it
+
 *****************TYPESCRIPT LEARNINGS*****************
 In TypeScript, just as in ECMAScript 2015, any file containing a top-level import or export is considered a module. 
 Conversely, a file without any top-level import or export declarations is treated as a script whose contents are available 

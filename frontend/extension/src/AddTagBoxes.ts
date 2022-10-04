@@ -3,7 +3,7 @@ import { TagBox } from './components/TagBox/TagBox';
 const delay = (t:number) => new Promise(resolve => setTimeout(resolve, t));
 
 window.onload = () => {
-    console.log("Song Panes Loaded!", Date.now());
+    console.log("Song Panes Loaded!", new Date().toISOString());
     delay(1000).then(() => { initializeTagBoxes(); })
     startHrefObserver(window.location.href);
     return;
@@ -50,8 +50,9 @@ function startHrefObserver(currenthref: string) {
         mutations.forEach(function(mutation) {
             if (currenthref != window.location.href) {
                 currenthref = window.location.href;
+                console.log("Observer detected href change", new Date().toISOString());
                 /* Changed ! your code here */
-                delay(4000).then(() => {
+                delay(5000).then(() => {
                     deleteTagBoxes();
                     initializeTagBoxes();
                 })
@@ -68,12 +69,12 @@ function startHrefObserver(currenthref: string) {
 }
 
 function initializeTagBoxes() {
+    console.log("Initializing Tag Boxes!", new Date().toISOString())
     const currentUrl: string = window.location.href;
 
     const playlistRegex: RegExp = new RegExp('youtube\.com\/playlist\\?list=', 'i')
     if (playlistRegex.test(currentUrl)) addTagBoxesToPlaylistItems()
     const playlistSongRegex: RegExp = new RegExp('youtube.com/watch\\?v=(.*)\&list=', 'i')
-    // console.log(currentUrl);
     if (playlistSongRegex.test(currentUrl)) addTagBoxesToPlaylistSong()
 }
 
@@ -86,22 +87,20 @@ function deleteTagBoxes() {
 }
 
 function addTagBoxesToPlaylistSong() {
-    const watchFlexyEl = document.querySelector("ytd-watch-flexy") as HTMLElement;
-    const primaryEl = watchFlexyEl.querySelector("div > div") as HTMLDivElement;
+    // primaryEl.querySelector("div.watch-active-metadata div:nth-child(2)")
+    const descriptionHolderEl = document.querySelector("ytd-expander div") as HTMLDivElement;
 
-    primaryEl.querySelector("div.watch-active-metadata div:nth-child(2)")
-    const descriptionHolderEl = primaryEl.querySelector("div#content") as HTMLDivElement;
+    const channelNameEl = document.querySelector('yt-formatted-string[class*="ytd-channel-name"] a') as HTMLAnchorElement;
 
-    const channelNameEl = primaryEl.querySelector("div.style-scope ytd-channel-name div div yt-formatted-string a") as HTMLAnchorElement;
-
-    const songNameEl = primaryEl.querySelector("h1 yt-formatted-string") as HTMLElement;
+    const songNameEl = document.querySelector("div[id=\"container\"] h1 yt-formatted-string") as HTMLElement
 
     // The retrieved element has parent yt-* which has parent h3. The retrieved element also has attribute href which starts with /playlist
     const playlistNameEl = document.querySelector('h3 yt-formatted-string a[href^="/playlist"]') as HTMLAnchorElement;
+    
+    console.log(playlistNameEl.innerText, channelNameEl.innerText, songNameEl.innerText);
 
     const tagBoxEl = new TagBox(parseHref(window.location.href), channelNameEl.innerText, songNameEl.innerText, playlistNameEl.innerText)
     descriptionHolderEl.appendChild(tagBoxEl.divEl);
-
 }
 
 function addTagBoxesToPlaylistItems() {
@@ -115,7 +114,6 @@ function addTagBoxesToPlaylistItems() {
 
         // This is the div that represents the whole row
         const contentEl = songPaneEl.children[1] as HTMLDivElement;
-        const menuNode : Element = songPaneEl.children[2]; 
 
         // This is youtubes container element including which contains the thumbnail and metadata
         const containerEl = contentEl.children[0] as HTMLDivElement;
