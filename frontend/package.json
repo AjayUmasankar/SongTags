@@ -18,11 +18,15 @@
     "webpack-cli": "^4.10.0"
   },
   "scripts": {
-    "fullinstall": "npm run backendinstall && npm run frontendinstall",
-    "frontendinstall": "npm install",
-    "backendinstall": "cd ../backend && py -m venv .venv && .\\.venv\\Scripts\\activate && pip install -r requirements.txt",
-    "start": "concurrently -t \"yyyy-MM-dd HH:mm\" -n backend,typecheck,webpack -c bgBlue.bold,bgGreen.bold,bgRed.bold \"npm run backendstart\" \"npx tsc --watch --preserveWatchOutput\" \"npx webpack\"",
-    "backendstart": "cd .. && cd backend && .\\.venv\\Scripts\\activate && uvicorn main:app --reload --port=8000",
-    "frontendwatch": "concurrently -n webpack,typecheck -c bgBlue.bold,bgRed.bold \"npx webpack\" \"npx tsc --watch --preserveWatchOutput\""
+    "setup": "npm run setupbackend && npm run setupfrontend",
+    "setupfrontend": "npm install",
+    "setupbackend": "cd ../backend && py -m venv .venv && .\\.venv\\Scripts\\activate && pip install -r requirements.txt",
+    "start": "concurrently -t \"yyyy-MM-dd HH:mm\" -n backend,extension -c bgBlue.bold,bgGreen.bold \"npm run startbackend\" \"npm run startwatch\"",
+    "startwatch": "concurrently -n webpack,typecheck -c bgCyan,bgRed \"npx webpack\" \"npm run starttypecheck\"",
+    "startbackend": "cd .. && cd backend && .\\.venv\\Scripts\\activate && uvicorn main:app --reload --port=8000",
+    "starttypecheck": "\"npx tsc --watch --preserveWatchOutput\"",
+
+
+    "startallbackup": "concurrently -t \"yyyy-MM-dd HH:mm\" -n backend,typecheck,webpack -c bgBlue.bold,bgGreen.bold,bgRed.bold \"npm run startbackend\" \"npm run starttypecheck\" \"npx webpack\""
   }
 }

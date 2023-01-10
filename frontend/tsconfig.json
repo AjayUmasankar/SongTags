@@ -3,7 +3,7 @@
     "compilerOptions": {
       /*  Only used when emitting files
       "rootDir": "extension",                 // will chop off "rootDir" from the input and prepend "outDir to it"
-      "outDir": "./extensionbuilt",           // not needed because we dont use base ts for compilation
+      "outDir": "./extensionbuil",           // not needed because we dont use base ts for compilation
       "sourceMap": true,                      // allows debuggers and other tools to display original ts code when working with the emitted js files.
       "removeComments": true,                 // strips comments from TS files when converting into JS
       "declaration": true,                    // generation of .d.ts files. .d.ts files are type definition files which describe the external API of your module. 
@@ -28,6 +28,5 @@
       "downlevelIteration": true,              // was needed for combining maps 
       "target": "es6",                        // sets js language version for emitted js and include compatiable library declarations. 
                                               // Typescript will also complain about you using es6 syntax such as NodeListOf cant be iterated if u dont have this
-
     },
   }

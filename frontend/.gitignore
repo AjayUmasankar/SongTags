@@ -1,4 +1,4 @@
 node_modules/*
 extensionbuilt/*
-!*/extensionbuilt/manifest.json
+!*/extension/manifest.json
 webpackbuilt/*

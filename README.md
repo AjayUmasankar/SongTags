@@ -1,7 +1,6 @@
 Created with FastAPI, Heroku, and MongoDB Atlas!
 
 # Local Development Quickstart
-
 ## Environment Variables Setup
 First, setup environment variables in a .env file and place it in backend/.env
 ```
@@ -9,21 +8,15 @@ DATABASE_URL="mongodb+srv://<username>:<password>@songtags.o5vngfj.mongodb.net/t
 PORT=8000
 ```
 
-## Hardcoded Backend URL Change
-Then, configure frontend to point to local backend\
-You will need to change the URL in BackendNotifier.ts
-```
-static tagsResource: string = "http://127.0.0.1:8000/tags/ajay/"
-```
 
-
-# Host Local Backend AND Watch Frontend
+## Host Local Backend AND Watch Frontend
+Frontend changes will automatically be built on filesave, you will only need to load the extension again.
+Backend changes will automatically be in a working state on file save.
 ```
 cd /frontend/
-npm run fullinstall
+npm run setup
 npm start
 ```
-The backend server will refresh upon any change to .py files\
-The frontend google chrome extension will autocompile to `frontend/extensionbuilt/` whenever any file in `frontend/extension/` is changed
+The frontend/chrome extension can be loaded by pointing to the `frontend/extension` folder
 
-Refer to readme in frontend or backend for more information
+

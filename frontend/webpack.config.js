@@ -6,17 +6,18 @@ module.exports = [
   {
     // entry: ["./extension/src/AddTagBoxes.ts", "./extension/src/components/TagBox/TagBox.ts", "./extension/src/components/BackendNotifier.ts",
     //         "./extension/src/components/AddTagButton/AddTagButton.scss"],
+    // Before we had no imports/exports. Instead we manually injected all our non-modules files (they had no export/import)
     // Webpack takes care of dependencies by starting from an entry and using those imports and etc.
-    // Before we had imports/exports, we manually injected all our non-modules files (they had no export/import)
     // Hence, our files were  able to refer to another files class (e.g. AddTagBoxes to TagBox component) without an import
     // This happened because https://stackoverflow.com/questions/69416097/what-does-a-file-without-any-top-level-import-or-export-declarations-is-treated
+
     mode: 'development',                // Maybe can use this to automatically adjust the backend url we are connecting to
     entry: ["./src/AddTagBoxes.ts",
     "./src/components/TagAddButton/TagAddButton.scss"],
             // "./extension/external_modules/bootstrap-5.1.3/js/bootstrap.js"], 
     context: path.resolve(__dirname, 'extension'),
     output: {
-      path: path.resolve(__dirname, "extensionbuilt"),
+      path: path.resolve(__dirname, "extension"), // You can change this directory to extensionbuilt to see exactly the files produced by our webpack (was just main.js and .css files)
       filename: "[name].js",            // This JS file doesnt include our compiled scss, so we need to load that separately in manifest.json too
       publicPath: ''                    // or else some webpack related error occurs in browser
     },
@@ -46,17 +47,17 @@ module.exports = [
         }
       ],
     },
-    plugins: [
-      new CopyPlugin({
-        patterns: [
-          { from: "**/*.css", to: "[path][name][ext]"},
-          { from: "**/*.png", to: "[path][name][ext]"},
-          { from: "**/*.html", to: "[path][name][ext]"},
-          { from: "external_modules/bootstrap-5.1.3/bootstrap.min.js", to: "external_modules/bootstrap-5.1.3/bootstrap.min.js"},
-          { from: "manifest.json", to: "manifest.json"}
-        ]
-      })
-    ],
+    // plugins: [
+    //   new CopyPlugin({
+    //     patterns: [
+    //       { from: "**/*.css", to: "[path][name][ext]"},
+    //       { from: "**/*.png", to: "[path][name][ext]"},
+    //       { from: "**/*.html", to: "[path][name][ext]"},
+    //       { from: "external_modules/bootstrap-5.1.3/bootstrap.min.js", to: "external_modules/bootstrap-5.1.3/bootstrap.min.js"}, // can change this to **/*.min.js ?
+    //       { from: "manifest.json", to: "manifest.json"}  // can change this to **/*.json
+    //     ]
+    //   })
+    // ],
     resolve: {
       extensions: ['.ts', '.js'],
     },
