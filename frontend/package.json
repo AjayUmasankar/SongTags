@@ -22,11 +22,9 @@
     "setupfrontend": "npm install",
     "setupbackend": "cd ../backend && py -m venv .venv && .\\.venv\\Scripts\\activate && pip install -r requirements.txt",
     "start": "concurrently -t \"yyyy-MM-dd HH:mm\" -n backend,extension -c bgBlue.bold,bgGreen.bold \"npm run startbackend\" \"npm run startwatch\"",
-    "startwatch": "concurrently -n webpack,typecheck -c bgCyan,bgRed \"npx webpack\" \"npm run starttypecheck\"",
     "startbackend": "cd .. && cd backend && .\\.venv\\Scripts\\activate && uvicorn main:app --reload --port=8000",
-    "starttypecheck": "\"npx tsc --watch --preserveWatchOutput\"",
+    "startwatch": "concurrently -n webpack,typecheck -c bgCyan,bgRed \"npx webpack\" \"npx tsc --watch --preserveWatchOutput\"",
 
-
-    "startallbackup": "concurrently -t \"yyyy-MM-dd HH:mm\" -n backend,typecheck,webpack -c bgBlue.bold,bgGreen.bold,bgRed.bold \"npm run startbackend\" \"npm run starttypecheck\" \"npx webpack\""
+    "startold": "concurrently -t \"yyyy-MM-dd HH:mm\" -n backend,typecheck,webpack -c bgRed.bold,bgCyan.bold,bgBlue.bold \"npm run startbackend\" \"npx tsc --watch --preserveWatchOutput\" \"npx webpack\""
   }
 }

@@ -3,104 +3,60 @@ import { TagBox } from './components/TagBox/TagBox';
 const delay = (t:number) => new Promise(resolve => setTimeout(resolve, t));
 
 window.onload = () => {
-    console.log("Song Panes Loaded!", new Date().toISOString());
-    delay(1000).then(() => { initializeTagBoxes(); })
-    startHrefObserver(window.location.href);
-    return;
-} 
-
-/*
-async function main() {
-
-
-    // Tried to obeserve the playlist items loading in but.. its a 50/50 on whether our code loads first or theirs!
-    const playListElementsHolder = document.querySelector('div ytd-item-section-renderer');
-    const observerOptions = {
-        childList: true
-    }
-    const observer = new MutationObserver((mutations, observer) => {
-        for (let mutation of mutations) {
-            observer.disconnect();
-            delay(500).then(() => { initializeTagBoxes(); })
-        }
-    }) 
-    observer.observe(playListElementsHolder as Element, observerOptions);
-    // // Pop up menu - need mutation observer
-    // const popUpElement = document.querySelector('ytd-popup-container');
-    // const observerOptions = {
-    //     childList: true
-    // }
-    // const observer = new MutationObserver((mutations, observer) => {
-    //     for (let mutation of mutations) {
-    //         let addedNode = mutation.addedNodes[0];
-    //         if(addedNode.localName !== "tp-yt-iron-dropdown") {
-    //             continue;
-    //         }
-    //         delay(500).then(() => { popUpInitialized(addedNode); })
-    //     }
-    // }) 
-    // observer.observe(popUpElement, observerOptions);
+    const currentUrl: string = window.location.href;
+    const playlistRegex: RegExp = new RegExp('youtube\.com\/playlist\\?list=', 'i')
+    if (playlistRegex.test(currentUrl)) addTagBoxesToPlaylistItems();
+    const playlistSongRegex: RegExp = new RegExp('youtube.com/watch\\?v=(.*)\&list=', 'i')
+    if (playlistSongRegex.test(currentUrl)) waitForElement('above-the-fold');
 }
-*/
 
-function startHrefObserver(currenthref: string) {
-    var bodyList = document.querySelector("body") as HTMLBodyElement;
-
-    var observer = new MutationObserver(function(mutations) {
-        mutations.forEach(function(mutation) {
-            if (currenthref != window.location.href) {
-                currenthref = window.location.href;
-                console.log("Observer detected href change", new Date().toISOString());
-                /* Changed ! your code here */
-                delay(5000).then(() => {
-                    deleteTagBoxes();
-                    initializeTagBoxes();
-                })
+const waitForElement = async (selector:any, rootElement = document.documentElement) => {
+    console.log(`Waiting for ${selector}...`, new Date().toISOString());
+    let config = {
+        childList: true,
+        subtree: true,
+    }
+    // First, do stuff when element spawns
+    return new Promise((resolve) => {
+        const observer = new MutationObserver(() => {
+            const element = document.getElementById(selector);
+            if (element) {
+                console.log(`${selector} was found!`, new Date().toISOString());
+                addTagBoxesToSong();
+                observer.disconnect();
+                resolve(element as HTMLDivElement);
             }
         });
-    });
-    
-    var config = {
-        childList: true,
-        subtree: true
-    };
-    
-    observer.observe(bodyList, config);
-}
+        observer.observe(rootElement, config);
+    }).then(element => {
+    // Second, do stuff whenever that element changes
+        selector = 'div#above-the-fold div#title h1' // element that holds title
+        const descriptionChanged = function (mutationsList:any, observer:any) {
+            console.log(mutationsList);
+            console.log(`Changes detected in ${selector}`, new Date().toISOString());
+            deleteTagBoxes();
+            addTagBoxesToSong();
+        }
+        let descriptionObserver = new MutationObserver(descriptionChanged)
+        descriptionObserver.observe((element as HTMLDivElement).querySelector(selector), config)
+    })
+};
 
-function initializeTagBoxes() {
-    console.log("Initializing Tag Boxes!", new Date().toISOString())
-    const currentUrl: string = window.location.href;
-
-    const playlistRegex: RegExp = new RegExp('youtube\.com\/playlist\\?list=', 'i')
-    if (playlistRegex.test(currentUrl)) addTagBoxesToPlaylistItems()
-    const playlistSongRegex: RegExp = new RegExp('youtube.com/watch\\?v=(.*)\&list=', 'i')
-    if (playlistSongRegex.test(currentUrl)) addTagBoxesToPlaylistSong()
-}
-
-
-function deleteTagBoxes() {
-    const tagBoxWrappers = document.querySelectorAll('.tagboxwrapper') as NodeListOf<Element>;
-    for (const element of tagBoxWrappers) {
-        element.remove();
-    }
-}
-
-function addTagBoxesToPlaylistSong() {
+function addTagBoxesToSong() {
     // primaryEl.querySelector("div.watch-active-metadata div:nth-child(2)")
-    const descriptionHolderEl = document.querySelector("ytd-expander div") as HTMLDivElement;
+    var channelNameEl = document.querySelector('yt-formatted-string[class*="ytd-channel-name"] a') as HTMLAnchorElement;
+    var songNameEl = document.querySelector("div[id=\"container\"] h1 yt-formatted-string") as HTMLElement
+    var playlistNameEl = document.querySelector('h3 yt-formatted-string a[href^="/playlist"]') as HTMLAnchorElement;
 
-    const channelNameEl = document.querySelector('yt-formatted-string[class*="ytd-channel-name"] a') as HTMLAnchorElement;
-
-    const songNameEl = document.querySelector("div[id=\"container\"] h1 yt-formatted-string") as HTMLElement
-
-    // The retrieved element has parent yt-* which has parent h3. The retrieved element also has attribute href which starts with /playlist
-    const playlistNameEl = document.querySelector('h3 yt-formatted-string a[href^="/playlist"]') as HTMLAnchorElement;
-    
     console.log(playlistNameEl.innerText, channelNameEl.innerText, songNameEl.innerText);
 
+    const belowThePlayerEl = document.querySelector("div[id=\"above-the-fold\"]") as HTMLDivElement;
+
     const tagBoxEl = new TagBox(parseHref(window.location.href), channelNameEl.innerText, songNameEl.innerText, playlistNameEl.innerText)
-    descriptionHolderEl.appendChild(tagBoxEl.divEl);
+
+    belowThePlayerEl.insertBefore(tagBoxEl.divEl, belowThePlayerEl.firstChild);
+    console.log("Added tagbox to currently playing song", new Date().toISOString());
+
 }
 
 function addTagBoxesToPlaylistItems() {
@@ -133,10 +89,18 @@ function addTagBoxesToPlaylistItems() {
         const songNameEl = metaEl.children[0].children[1] as HTMLAnchorElement
         const playlistNameEl = displayDialogEl.children[1] as HTMLElement;
 
-
         const tagBoxEl = new TagBox(parseHref(anchorEl.href), channelNameEl.innerText, songNameEl.innerText, playlistNameEl.innerText)
+        console.log('This songs parsed url is: ', parseHref(anchorEl.href));
         contentEl.appendChild(tagBoxEl.divEl);
     })
+}
+
+
+function deleteTagBoxes() {
+    const tagBoxWrappers = document.querySelectorAll('.tagbox') as NodeListOf<Element>;
+    for (const element of tagBoxWrappers) {
+        element.remove();
+    }
 }
 
 
@@ -145,4 +109,30 @@ function parseHref(href: string) {
     const result: RegExpMatchArray = href.match(regexp) as RegExpMatchArray;
     return result[1];
 }
+
+
+// function startHrefObserver(currenthref: string) {
+//     var bodyList = document.querySelector("body") as HTMLBodyElement;
+//     var observer = new MutationObserver(function(mutations) {
+//         mutations.forEach(function(mutation) {
+//             if (currenthref != window.location.href) {
+//                 console.log("Observer detected href change", new Date().toISOString());
+//                 console.log("Current: " + currenthref, "Old: " + window.location.href);
+//                 currenthref = window.location.href;
+//                 deleteTagBoxes();
+//                 initializeTagBoxes();
+//             }
+//         });
+//     });
+    
+//     var config = {
+//         childList: true,
+//         subtree: true
+//     };
+    
+//     observer.observe(bodyList, config);
+// }
+
+
+
 

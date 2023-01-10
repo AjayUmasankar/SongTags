@@ -5,25 +5,24 @@
   align-items: center;
   justify-items: center;
   align-content: center;
-  padding: 5px 12px;
+  padding: 5px 5px;
 }
 .text-input input[type=text] {
-  display: flex;
-  height: 33px;
-  width: 40px;
   box-sizing: border-box;
-  outline: none;
-  font-family: "Roboto";
+  height: 14.5px;
+  width: 20px;
+  font-family: "Roboto", "Arial", sans-serif;
+  font-size: 12px;
+  font-weight: 400;
   transition: opacity 0.4s ease-in, width 0.3s ease-in;
-  border: 0.5px solid #b42626;
+  border: 0.2px solid #3f3f3f;
   border-radius: 3px 3px 3px 3px;
-  background-color: #000000;
+  background-color: #0f0f0f;
   color: #ffffff;
   opacity: 0%;
-  padding: 10px 10px 10px 10px;
 }
 .text-input input[type=text]:focus {
-  width: 196px;
+  width: 80px;
   opacity: 100%;
   transition: width 0.4s ease-out, opacity 0.3s linear;
 }
@@ -32,25 +31,13 @@
   justify-content: center;
   position: absolute;
   bottom: 5px;
-  line-height: 33px;
-  color: white;
-  padding: 0px 20px;
-  width: 0px;
+  line-height: 14.5px;
+  width: 20px;
   border-radius: 3px 3px 3px 3px;
-  background: #E03616;
   transition: transform 0.3s ease-in, opacity 0.3s ease-in, width 0.3s ease-in;
 }
 .text-input input[type=text]:focus + .taglabel {
-  -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  -khtml-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-  padding: 0px 20px;
-  width: px;
-  transition: transform 0.3s ease-in, opacity 0.5s ease-out, width 0.4s ease-out, height 0.3s ease-out;
+  transition: width 0.4s ease-out, opacity 0.3s linear;
   opacity: 0%;
-  width: 156px;
-  height: 33px;
+  width: 80px;
 }

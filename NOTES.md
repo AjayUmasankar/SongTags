@@ -17,6 +17,8 @@ Its better to always update db instead of just calling the db once at the start 
 
 pytyhon global variables can be referenced easily. altho to modify it you need to do a `global varname` at the start of function
 
+python defaultdict and nesteddict
+
 ***************** heroku learnings **********************
 heroku machines use linux so you need to maintain two different procfiles :(
 `heroku config:set LOG_LEVEL=debug` more logs
@@ -39,6 +41,7 @@ The total width of the label element is equivalent to the textbox that it covers
 
     // The retrieved element has parent yt-* which has parent h3. The retrieved element also has attribute href which starts with /playlist
     const playlistNameEl = document.querySelector('h3 yt-formatted-string a[href^="/playlist"]') as HTMLAnchorElement;
+    https://bobbyhadz.com/blog/javascript-queryselector-class-contains
 
     border-inline is the left and right. border-inline-start is the left
     border-block is the top and down. border-block-start is the top
@@ -47,7 +50,7 @@ The total width of the label element is equivalent to the textbox that it covers
     its important to know that the constraint doesnt have to be set on the top level divs
     you may have to follow the child elements down to see where the width/height constraint is set
     this is because the parent div elements adjust to fit the small object that has height/width set on it
-
+    
 *****************TYPESCRIPT LEARNINGS*****************
 In TypeScript, just as in ECMAScript 2015, any file containing a top-level import or export is considered a module. 
 Conversely, a file without any top-level import or export declarations is treated as a script whose contents are available 

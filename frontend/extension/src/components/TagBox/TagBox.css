@@ -2,55 +2,38 @@
   color: #fff;
   background: #5372F0;
 }
-.tagboxwrapper {
-  width: auto;
-  /* padding: 5px 5px 5px; */
-  height: 100%;
-  /* justify-content:center; */
-}
-
-.tagboxwrapper .tagbox{
-  /* margin: 10px 0; */
+.tagbox {
   display: flex;
   flex-direction: row;
-  justify-content: center;
-  align-items: flex-end;
+  justify-content: flex-start;  /* affects the x-axis of the element */
+  align-items: center; /* affects the y-axis of the element */
+
+  width: auto;
+  height: 100%;
 }
 
-.tagbox ul {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  border-radius: 5px;
-  /* padding: 7px; */
-  /* border: 0px solid #a6a6a6; */
+.pill {
+  /* background-color: #3f3f3f; */
+  /* border-radius: 5px; */
+  color: #3ea6ff;
+  font-family: "Roboto", "Arial", sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+
+  padding: 0px 1px;
+  text-align: center;
+  text-decoration-line:none; /* removes underline caused by href */
+  /*   
+  line-height:15px;
+  text-decoration-color: #3ea6ff;
+  text-decoration-style: solid;
+  */
 }
 
-.tagbox ul li {
-  color: floralwhite;
-  margin: 3px 3px 3px 8px;
-  list-style: none;
-  background: #000000;
-  padding: 5px 8px 5px 10px;
-  font-size: medium;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-  font-family: "Roboto","Arial",sans-serif;
-  font-weight: 300;
-
-  border-style: solid;
-  border-color: #1c1818; 
-  border-left-color: white;
-  border-width: 2px;
-  border-top-color: #1c1818;
-  border-bottom-color: #1c1818;
-
-  border-radius: 15px;
-  border-left-width: 2.5px;
-  border-start-end-radius: 6px;
-  border-end-start-radius: 6px;
-  border-start-start-radius: 4px;    /* 12px also looks good */
-  border-end-end-radius: 8px;
+.pill.metadata {
+  display: none;
 }
+
 
 
 .tagbox ul li.uploader {

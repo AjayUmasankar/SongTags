@@ -36,7 +36,6 @@ export class TagBox {
     href: string;
 
     divEl: Element;
-    ul: HTMLUListElement;
     input: HTMLInputElement;
 
     maxTags: number;
@@ -53,41 +52,89 @@ export class TagBox {
 
         this.divEl = document.createElement('DIV');
         if(playlistName === "Watch later") {
-            this.ul = document.createElement('ul') as HTMLUListElement;
+            // this.ul = document.createElement('ul') as HTMLUListElement;
             this.input = document.createElement('input');
         } else {
-            this.divEl.classList.add("tagboxwrapper");
+            this.divEl.classList.add("tagbox");
             this.divEl.addEventListener("click", (evt: any) => evt.stopPropagation()); // Or else we trigger youtubes click handler and enter the song
             this.divEl.innerHTML =
             `
-            <div class = "tagbox">
-                <ul> 
                 <div class="text-input">
-                <input type="text" id="` + href + `" placeholder="">
-                <label for="` + href + `" class=taglabel>+</label>
+                    <input type="text" id="` + href + `" placeholder="">
+                    <label for="` + href + `" class=taglabel>+</label>
                 </div>
-                </ul>
-            </div>
             `
-            this.ul = this.divEl.querySelector("ul") as HTMLUListElement,
             this.input = this.divEl.querySelector("input") as HTMLInputElement,
             this.input.addEventListener("keyup", this.addTagFromUser.bind(this));
 
-
-
-            // We pull the tags that exist already from db
-            // We add to this list from our hardcoded values
-            BackendNotifier.getStorageTags(this.href).then(tagsString => {
-                let backendTags: Map<string, TagData> = new Map(Object.entries(JSON.parse(tagsString)));
-                let automatedTags: Map<string, TagData> = this.parseData(songname, uploader, playlistName)
-                // this.addTags(new Map([backendTags, ...automatedTags]));
-                this.tags = backendTags;
-                this.addTags(automatedTags);
+            // Let backend do all the work of getting tags!
+            BackendNotifier.getTags("ajay", this.href, uploader, songname, playlistName).then(tagsString => {
+                let tags: Map<string, TagData> = new Map(Object.entries(JSON.parse(tagsString)));
+                this.tags = tags;
                 this.rebuildTags();             // needed for first runthrough
             })
         }
     }
 
+    // We use this map to enable bulk updates instead of one by one whenever a change occurs
+    // addTags(automatedTags: Map<string, TagData>, backendTags:Map<string, TagData>) {
+    addTags(tags: Map<string, TagData>) {
+        let isNewTag = false;
+        tags.forEach((value, key) => {
+            isNewTag = this.addTagToLocal(key, value.type);
+        })
+        
+        if(isNewTag) { 
+            BackendNotifier.updateTagsForSong("ajay", this.href, this.tags); 
+            this.rebuildTags();   
+        }
+                                                // Need to do this for first time only to create tags on frontend
+    }
+
+    addTagToLocal(tagName: string, type: string = "default"): boolean {
+        // Can have up to 10 tags. No duplicates. Minimum length = 1
+        let isNewTag = false;
+        if(!this.tags.has(tagName)){
+            isNewTag = true;
+            if(this.tags.size >= 10) return false; 
+            this.tags.set(tagName, new TagData(type));
+        }
+        return isNewTag;
+    }
+
+    // Reads input field and adds the tag
+    addTagFromUser(e:KeyboardEvent){
+        if (e.key !== 'Enter') return;
+        let inputEl = e.target as HTMLInputElement;
+        let tagName = inputEl.value.replace(/\s+/g, ' ');
+
+        this.addTags(new Map<string, TagData>([[tagName, new TagData("default")]]));
+        inputEl.value = "";
+    }
+
+    removeTag(evt:MouseEvent, tagName: string){
+        let element = evt.target as Element;
+        console.log('Removing tag element:', element);
+        if(!element) return;
+        this.tags.delete(tagName)
+        element.remove();
+        BackendNotifier.updateTagsForSong("ajay", this.href, this.tags);
+    }
+
+    // Rebuilds the tag box contents for the associated href
+    rebuildTags(){
+        this.divEl.querySelectorAll("a").forEach(li => li.remove());
+        this.tags.forEach((tag, key) => {
+            let anchorTag: HTMLAnchorElement = document.createElement('a');
+            anchorTag.href = "javascript:;";
+            anchorTag.classList.add("pill");
+            anchorTag.classList.add(tag.type); // will be used to give different color to tags
+            anchorTag.innerHTML = `\#${key} `
+            let removeTagBound = this.removeTag.bind(this);
+            anchorTag.addEventListener('click', (evt) => removeTagBound(evt,key));
+            this.divEl.insertAdjacentElement("afterbegin", anchorTag);
+        })
+    }
 
     parseData(songname: string, uploader: string, playlistName: string) {
         let tagsToAdd = new Map<string, TagData>();
@@ -224,63 +271,4 @@ export class TagBox {
 
 
 
-    // We use this map to enable bulk updates instead of one by one whenever a change occurs
-    // addTags(automatedTags: Map<string, TagData>, backendTags:Map<string, TagData>) {
-    addTags(tags: Map<string, TagData>) {
-        let isNewTag = false;
-        tags.forEach((value, key) => {
-            isNewTag = this.addTagToLocal(key, value.type);
-        })
-        
-        if(isNewTag) { 
-            BackendNotifier.updateTagsForSong(this.href, this.tags); 
-            this.rebuildTags();   
-        }
-                                              // Need to do this for first time only to create tags on frontend
-    }
-
-    addTagToLocal(tagName: string, type: string = "default"): boolean {
-        // Can have up to 10 tags. No duplicates. Minimum length = 1
-        let isNewTag = false;
-        if(!this.tags.has(tagName)){
-            isNewTag = true;
-            if(this.tags.size >= 10) return false; 
-            this.tags.set(tagName, new TagData(type));
-        }
-        return isNewTag;
-    }
-
-    // Reads input field and adds the tag
-    addTagFromUser(e:KeyboardEvent){
-        if (e.key !== 'Enter') return;
-        let inputEl = e.target as HTMLInputElement;
-        let tagName = inputEl.value.replace(/\s+/g, ' ');
-
-        this.addTags(new Map<string, TagData>([[tagName, new TagData("default")]]));
-        inputEl.value = "";
-    }
-
-
-    removeTag(evt:MouseEvent, tagName: string){
-        let element = evt.target as Element;
-        console.log('Removing tag element:', element);
-        if(!element) return;
-        this.tags.delete(tagName)
-        element.remove();
-        BackendNotifier.updateTagsForSong(this.href, this.tags);
-    }
-
-    // Rebuilds the tag box contents for the associated href
-    rebuildTags(){
-        this.ul.querySelectorAll("li").forEach(li => li.remove());
-        this.tags.forEach((tag, key) => {
-            let liTag: HTMLLIElement = document.createElement('li');
-            liTag.classList.add(tag.type)
-            liTag.innerHTML = `${key}`
-            // let liTag = `<li>${tag} <i class="uit uit-multiply"></i></li>`; # if you need the X
-            let removeTagBound = this.removeTag.bind(this);
-            liTag.addEventListener('click', (evt) => removeTagBound(evt,key));
-            this.ul.insertAdjacentElement("afterbegin", liTag);
-        })
-    }
 }
