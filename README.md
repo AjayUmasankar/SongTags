@@ -1,4 +1,5 @@
-Created with FastAPI, Heroku, and MongoDB Atlas!
+Backend API is supported by Python 3.9.0, FastAPI, Render, and MongoDB Atlas!
+Chrome extension is developed in vinalla TS
 
 # Local Development Quickstart
 ## Environment Variables Setup

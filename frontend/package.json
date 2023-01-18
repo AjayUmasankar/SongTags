@@ -20,7 +20,7 @@
   "scripts": {
     "setup": "npm run setupbackend && npm run setupfrontend",
     "setupfrontend": "npm install",
-    "setupbackend": "cd ../backend && py -m venv .venv && .\\.venv\\Scripts\\activate && pip install -r requirements.txt",
+    "setupbackend": "cd ../backend && python -m venv .venv && .\\.venv\\Scripts\\activate && pip install -r requirements.txt",
     "start": "concurrently -t \"yyyy-MM-dd HH:mm\" -n backend,extension -c bgBlue.bold,bgGreen.bold \"npm run startbackend\" \"npm run startwatch\"",
     "startbackend": "cd .. && cd backend && .\\.venv\\Scripts\\activate && uvicorn main:app --reload --port=8000",
     "startwatch": "concurrently -n webpack,typecheck -c bgCyan,bgRed \"npx webpack\" \"npx tsc --watch --preserveWatchOutput\"",

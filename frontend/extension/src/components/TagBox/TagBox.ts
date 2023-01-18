@@ -20,17 +20,6 @@ export class TagData {
     }
 }
 
-// export class Tag2 {
-//     name: string;
-//     type: string;
-//     date: string;
-//     constructor (name: string, type: string = "default", date: string = new Date().toISOString()) {
-//         this.name = name;
-//         this.type = type;
-//         this.date = date;
-//     }
-// }
-
 export class TagBox {
     playlistName: string;
     href: string;
@@ -140,104 +129,28 @@ export class TagBox {
         let tagsToAdd = new Map<string, TagData>();
         let artistFound: boolean = false; 
         
-        /*******************************************************************
-         *                 Regex to parse playlist name                    *
-         *******************************************************************/  
-        const OSTPlaylistRegex = new RegExp('Game/TV/Movie OST')
-        if (OSTPlaylistRegex.test(playlistName)) tagsToAdd.set("OST", new TagData("category"));
-
-        const classicsPlaylistRegex = new RegExp('^Classics$')
-        if (classicsPlaylistRegex.test(playlistName)) tagsToAdd.set("ᛄᛄᛄᛄᛄ", new TagData("GOAT"));
-
-        tagsToAdd.set("INPLAYLIST", new TagData ("metadata"));
-
-        /*******************************************************************
-         *       Regex to parse song name and get extra information        *
-         *******************************************************************/  
-        /* Regex to parse song name and get extra information*/
-        const nightcoreRegex = new RegExp('nightcore', 'i')
-        if (nightcoreRegex.test(songname)) tagsToAdd.set("Nightcore", new TagData("category"));
-        
-        const tanocRegex = new RegExp('usao|dj noriken|ko3|Massive New Krew|REDALiCE|Laur|kors k|Srav3R|aran|Hommarju|DJ Genki|DJ Myosuke|t\\+pazolite|RoughSketch|Kobaryo|P\\*Light|nora2r|Relect|Getty|Tatsunoshin', 'i')
-        if (tanocRegex.test(songname)) tagsToAdd.set("TANO*C", new TagData("category"));
-
-        const touhouRegex = new RegExp('東方|Touhou', 'i')
-        if (touhouRegex.test(songname)) tagsToAdd.set("東方", new TagData("category"))
 
         /* Vocaloid */
-        const mikuRegex = new RegExp('Miku|ミク', 'i')
-        if (mikuRegex.test(songname)) tagsToAdd.set("ミク", new TagData("vocaloid"));
+        // const mikuRegex = new RegExp('Miku|ミク', 'i')
+        // if (mikuRegex.test(songname)) tagsToAdd.set("ミク", new TagData("vocaloid"));
 
-        const kafuRegex = new RegExp('Kafu|可不', 'i')
-        if (kafuRegex.test(songname)) tagsToAdd.set("可不", new TagData("vocaloid"));
-
-        const slaveRegex = new RegExp('Slave\.V-V-R', 'i')
-        if (slaveRegex.test(songname)) tagsToAdd.set("Slave.V-V-R", new TagData("vocaloid"));
-
-        const iaRegex = new RegExp(' IA')
-        if (iaRegex.test(songname)) tagsToAdd.set("IA", new TagData("vocaloid"));
-
-
-        /* Game and Anime */
-        const gameRegex = new RegExp('(Blue Archive|Counterside|Lost Ark|Arknights)', 'i')
-        const gameMatch = songname.match(gameRegex)
-        if (gameMatch) {tagsToAdd.set(gameMatch[1].trim(), new TagData("game")); artistFound = true;}
-
-        const persona5Regex = new RegExp('(P5|P5R|Persona 5)')
-        const persona5Match = songname.match(persona5Regex);
-        if (persona5Match) { tagsToAdd.set("Persona 5", new TagData("game")); artistFound = true;}
-        const persona4Regex = new RegExp('(P4|P4G|Persona 4)')
-        const persona4Match = songname.match(persona4Regex);
-        if (persona4Match) {tagsToAdd.set("Persona 4", new TagData("game")); artistFound = true;}
-
-        const danganronpaRegex = new RegExp('(Danganronpa|Danganronpa 2|SDR2|Danganronpa V3|Danganronpa 3)')
-        const danganronpaMatch = songname.match(danganronpaRegex);
-        if (danganronpaMatch) {tagsToAdd.set("Danganronpa", new TagData("game")); artistFound = true;}
-
-        const honkaiRegex = new RegExp('(HI3|Honkai Impact 3|Houkai Impact 3)')
-        const honkaiMatch = songname.match(honkaiRegex);
-        if (honkaiMatch) {tagsToAdd.set("Honkai Impact 3rd", new TagData("game")); artistFound = true;}
-
-        const animeRegex = new RegExp('(Bleach|Gintama|Link Click)', 'i')
-        const animeMatch = songname.match(animeRegex)
-        if (animeMatch) {tagsToAdd.set(animeMatch[1].trim(), new TagData("anime")); artistFound = true;}
-        
-
-
-
+        // /* Game and Anime */
+        // const gameRegex = new RegExp('(Blue Archive|Counterside|Lost Ark|Arknights)', 'i')
+        // const gameMatch = songname.match(gameRegex)
+        // if (gameMatch) {tagsToAdd.set(gameMatch[1].trim(), new TagData("game")); artistFound = true;}
+  
         /*******************************************************************
          *      Regex to parse uploader name (and try to find artist)      *
          *******************************************************************/  
         // Case 0 - Artist already fouind 
          if(artistFound) return tagsToAdd; 
 
-        // Case 1 - Found artist through topic
-        const topicRegex = new RegExp(' - Topic', 'i')
-        if (topicRegex.test(uploader)) {
-            tagsToAdd.set(uploader.slice(0, -8), new TagData("artist"));
-            return tagsToAdd;
-        }
-
-        // Case 2 - Found artist by removing Official
-        const officialRegex = new RegExp('(.*?) Official', 'i')
-        result = uploader.match(officialRegex) as RegExpMatchArray;
-        if(result){
-            tagsToAdd.set(result[1], new TagData("artist"))
-            return tagsToAdd;
-        }
 
         // Case 3 - Found artist by removing \
         const slashRegex = new RegExp('(.*?) \/')
         var result: RegExpMatchArray = uploader.match(slashRegex) as RegExpMatchArray;
         if(result) {
             tagsToAdd.set(result[1], new TagData("artist"))
-            return tagsToAdd;
-        }
- 
-        // Case 4 - Found artist as uploader name  exists in song name 
-        const uploaderInSongNameRegex = new RegExp(uploader, 'i')
-        if (uploaderInSongNameRegex.test(songname)) {
-            tagsToAdd.set(uploader, new TagData("artist"));
             return tagsToAdd;
         }
 
@@ -248,12 +161,6 @@ export class TagBox {
             tagsToAdd.set(result[1], new TagData("artist"));
             return tagsToAdd;
         }
-
-        // Case 6 - Found artist that has feat. in title
-
-        // Case 997 - KMNZ x EXAMPLE is in title, uploader is KMNZ LITA
-
-        // Case 499
 
         // Case 998 - Delimit on '-' lmao..
         const dashRegex = new RegExp('(.*?) -.*')

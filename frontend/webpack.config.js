@@ -4,15 +4,15 @@ const CopyPlugin = require("copy-webpack-plugin");
 
 module.exports = [
   {
-    // entry: ["./extension/src/AddTagBoxes.ts", "./extension/src/components/TagBox/TagBox.ts", "./extension/src/components/BackendNotifier.ts",
+    // entry: ["./extension/src/TagBoxInjector.ts", "./extension/src/components/TagBox/TagBox.ts", "./extension/src/components/BackendNotifier.ts",
     //         "./extension/src/components/AddTagButton/AddTagButton.scss"],
     // Before we had no imports/exports. Instead we manually injected all our non-modules files (they had no export/import)
     // Webpack takes care of dependencies by starting from an entry and using those imports and etc.
-    // Hence, our files were  able to refer to another files class (e.g. AddTagBoxes to TagBox component) without an import
+    // Hence, our files were  able to refer to another files class (e.g. TagBoxInjector to TagBox component) without an import
     // This happened because https://stackoverflow.com/questions/69416097/what-does-a-file-without-any-top-level-import-or-export-declarations-is-treated
 
     mode: 'development',                // Maybe can use this to automatically adjust the backend url we are connecting to
-    entry: ["./src/AddTagBoxes.ts",
+    entry: ["./src/TagBoxInjector.ts",
     "./src/components/TagAddButton/TagAddButton.scss"],
             // "./extension/external_modules/bootstrap-5.1.3/js/bootstrap.js"], 
     context: path.resolve(__dirname, 'extension'),

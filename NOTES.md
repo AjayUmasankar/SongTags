@@ -51,6 +51,9 @@ The total width of the label element is equivalent to the textbox that it covers
     you may have to follow the child elements down to see where the width/height constraint is set
     this is because the parent div elements adjust to fit the small object that has height/width set on it
     
+mutationobserver is cracked, look at yours for learning how to wait for an element to spawn and then also do something
+each time that element is updated
+
 *****************TYPESCRIPT LEARNINGS*****************
 In TypeScript, just as in ECMAScript 2015, any file containing a top-level import or export is considered a module. 
 Conversely, a file without any top-level import or export declarations is treated as a script whose contents are available 
@@ -61,11 +64,11 @@ https://stackoverflow.com/questions/29996145/visual-studio-code-compile-on-save
 
 regex syntax. need to fucking escape ? with two \\ 
 
-query selector in AddTagboxes soo useful
+query selector in TagBoxInjector soo useful
 
 `npx tsc` does type checking `npx tsc --watch`
 
-if typescript is complaining about references. e.g. cant find TagBox from AddTagBoxes.ts, then add a path to TagBox in tsconfig.json include section.
+if typescript is complaining about references. e.g. cant find TagBox from TagBoxInjector.ts, then add a path to TagBox in tsconfig.json include section.
 Even with ts complaining, babel will still compile fine 
 tsconfig.json has useful comments
 
