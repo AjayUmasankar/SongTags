@@ -1,9 +1,13 @@
-Backend API is supported by Python 3.9.0, FastAPI, Render, and MongoDB Atlas!
-Chrome extension is developed in vinalla TS
+Backend API is supported by Python 3.10.0, FastAPI, XXXXX, and MongoDB Atlas!
+Frontend/Chrome extension is developed in vanilla TS
 
 # Local Development Quickstart
+## Prerequisites
+NodeJS 18.15.0
+Python 3.10
+
 ## Environment Variables Setup
-First, setup environment variables in a .env file and place it in `backend/.env`
+First, setup environment variables in a .env file and place it in `backend/config/.env`
 ```
 DATABASE_URL="mongodb+srv://<username>:<password>@songtags.o5vngfj.mongodb.net/test"
 PORT=8000

@@ -7,7 +7,9 @@ window.onload = () => {
     const playlistRegex: RegExp = new RegExp('youtube\.com\/playlist\\?list=', 'i')
     if (playlistRegex.test(currentUrl)) injectTagBoxToPlaylistItems();
     const playlistSongRegex: RegExp = new RegExp('youtube.com/watch\\?v=(.*)\&list=', 'i')
-    if (playlistSongRegex.test(currentUrl)) waitForYoutube();
+    if (playlistSongRegex.test(currentUrl)) {
+        waitForYoutube();
+    }
 }
 
 function injectTagBoxToSong() {
@@ -30,9 +32,8 @@ function injectTagBoxToSong() {
 function injectTagBoxToPlaylistItems() {
     // Traversing the Actual Song Panes
     const displayDialogEl = document.querySelectorAll('#display-dialog')[0] as HTMLDivElement;
-    // console.log(playlistNameEl);
-    // console.log(playlistNameEl.innerText);
     const songPanes: NodeList = document.querySelectorAll("div ytd-playlist-video-renderer"); 
+    console.log(songPanes)
     songPanes.forEach((songPane) => {
         let songPaneEl = songPane as Element;
 
@@ -86,8 +87,8 @@ const waitForYoutube = async (rootElement = document.documentElement) => {
     // Second, do stuff whenever that element changes
         selector = 'div#above-the-fold div#title h1' // element that holds title
         const descriptionChanged = function (mutationsList:any, observer:any) {
-            console.log(mutationsList);
             console.log(`Changes detected in ${selector}`, new Date().toISOString());
+            console.log(mutationsList);
             deleteTagBoxes();
             injectTagBoxToSong();
         }
@@ -114,27 +115,6 @@ function parseHref(href: string) {
 }
 
 
-// function startHrefObserver(currenthref: string) {
-//     var bodyList = document.querySelector("body") as HTMLBodyElement;
-//     var observer = new MutationObserver(function(mutations) {
-//         mutations.forEach(function(mutation) {
-//             if (currenthref != window.location.href) {
-//                 console.log("Observer detected href change", new Date().toISOString());
-//                 console.log("Current: " + currenthref, "Old: " + window.location.href);
-//                 currenthref = window.location.href;
-//                 deleteTagBoxes();
-//                 initializeTagBoxes();
-//             }
-//         });
-//     });
-    
-//     var config = {
-//         childList: true,
-//         subtree: true
-//     };
-    
-//     observer.observe(bodyList, config);
-// }
 
 
 
