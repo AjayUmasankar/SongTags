@@ -1,7 +1,10 @@
+import os
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 import time
 import sys
+
+import uvicorn
 
 # from routes.tags_router import tags_router
 # from routes.user_router import user_router
@@ -46,6 +49,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+if __name__ == "__main__":
+    uvicorn.run("main:app", host="0.0.0.0", port=os.getenv("PORT", default=8000), log_level="info")
 
 # This is called at the start of every request
 @app.middleware("http")
