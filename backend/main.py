@@ -49,9 +49,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# if __name__ == "__main__":
-#     uvicorn.run("main:app", port=os.getenv("PORT", default=8000))
-
 # This is called at the start of every request
 @app.middleware("http")
 async def add_process_time_header(request: Request, call_next):
@@ -62,3 +59,12 @@ async def add_process_time_header(request: Request, call_next):
     response.headers["X-Process-Time"] = str(process_time)
     return response
     
+
+@app.get("/", tags=["health"], status_code=200)
+async def health():
+    return "i am exist"
+    if item_id != "plumbus":
+        raise HTTPException(
+            status_code=403, detail="You can only update the item: plumbus"
+        )
+    return {"item_id": item_id, "name": "The great Plumbus"}

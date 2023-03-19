@@ -1,4 +1,0 @@
-node_modules/*
-extensionbuilt/*
-!*/extension/manifest.json
-webpackbuilt/*

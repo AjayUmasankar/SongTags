@@ -15,27 +15,22 @@ settings = Settings()
 # MongoDB Atlas connection setup 
 client = motor.motor_asyncio.AsyncIOMotorClient(settings.database_url)
 db = client.songtags
-songTagsCol = db["songtags"] 
+user_collection = db["songtags"]  # should try to rename the collection from songtags to users
 print(db)
-print(songTagsCol)
 
 
-async def get_user_information(username: str):
-    return await songTagsCol.find_one({"username": username}, {'_id': 0})
-
-async def get_user_dict(username: str):
-    userDict = {}
-    user = await songTagsCol.find_one({"username": username})
+async def get_user_document(username: str):
+    user = await user_collection.find_one({"username": username})
     # to serialize bson document to a json formatted string
-    userJson = dumps(user)
+    user_json = dumps(user)
     # to deseralize json and create a python object 
-    userDict = loads(userJson)
-    return userDict
+    user_dict = loads(user_json)
+    return user_dict
 
 async def set_tags(username: str, href: str, tags: dict):
     # tags = nested_dict()
     usertoupdate = { "username" : username }
     hreftochange = "hrefs." + href
     newvalues = { "$set": {  hreftochange : tags } }
-    songTagsCol.update_one( usertoupdate, newvalues, upsert=True)
+    user_collection.update_one(usertoupdate, newvalues, upsert=True)
 
