@@ -6,14 +6,12 @@ import psycopg2.extras
 
 # Used for reading in enviroment variables from .env 
 class Settings(BaseSettings):
-    database_url: str = "mongodb://localhost:27017"
-    connection_string: str = "nope"
+    connection_string: str = "postgres://postgres:<PASSWORD>@db.rsirtgzvfzdoakaajals.supabase.co:6543/postgres"
 
     class Config:
         env_file = "database/.env"
 
 settings = Settings()
-
 conn = psycopg2.connect(settings.connection_string)
 
 # This cursor keeps column names when fetching values

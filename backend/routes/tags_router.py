@@ -51,7 +51,7 @@ async def set_tags(username:str, song_id: str, request: Request):
     return JSONResponse(status_code=status.HTTP_201_CREATED, content=tags)
 
 
-@router.delete("/{user_email}/{song_id}/{tag_name}", description="Deletes tag in database if it exists")
+@router.delete("/{user_email}/{song_id}/{tag_name}", description="Deletes tag in database if it exists", response_model=Tag)
 async def delete_tag(user_email:str, song_id: str, tag_name: str):
     tag = await db.delete_tag(user_email, song_id, tag_name)
     return tag

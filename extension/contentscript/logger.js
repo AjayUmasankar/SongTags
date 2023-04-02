@@ -1,6 +1,4 @@
 const pino = require("pino");
-// const pinoCaller = require('pino-caller')(pino)
-// const fs = require(fs)
 
 const level = "debug";
 const prettyPrint = {
@@ -22,24 +20,3 @@ export const logger = pino({
 	},
 	prettyPrint: prettyPrint
 })
-
-// const pinoExpress = require("express-pino-logger");
-// export const expressLogger = pinoExpress({
-// 	name: "express",
-// 	level: level || "info",
-// 	formatters: {
-// 		level(label) {
-// 			return { level: label };
-// 		}
-// 	},
-// 	serializers: {
-// 		res: res => ({
-// 			status: res.statusCode
-// 		}),
-// 		req: req => ({
-// 			method: req.method,
-// 			url: req.url
-// 		})
-// 	},
-// 	prettyPrint: prettyPrint
-// });
