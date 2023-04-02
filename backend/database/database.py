@@ -48,7 +48,7 @@ async def get_playlist(playlist_id: str, playlist_name: str):
     playlist_exists = cursor.fetchone()[0]
 
     if not playlist_exists:
-        cursor.execute("INSERT INTO public.playlist (playlist_id, name, user_id) VALUES (%s, %s, %s) RETURNING playlist_id, name, user_id", (playlist_id, playlist_name,))
+        cursor.execute("INSERT INTO public.playlist (playlist_id, name) VALUES (%s, %s) RETURNING playlist_id, name", (playlist_id, playlist_name,))
         conn.commit()
     else:
         cursor.execute("SELECT * FROM public.playlist WHERE playlist_id = %s", (playlist_id,))
@@ -81,4 +81,4 @@ async def delete_tag(user_email: str, song_id: str, tag_name: str):
                    (user_email, song_id, tag_name,))
     row = cursor.fetchone()
     conn.commit()
-    return row
+    return { "name": row.tag_name, "type": row.type, "priority": row.priority } 

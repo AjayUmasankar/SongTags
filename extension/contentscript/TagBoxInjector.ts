@@ -9,7 +9,7 @@ window.onload = async () => {
     await TagService.getEndpoint();
     const currentUrl: string = window.location.href;
     const playlistRegex: RegExp = new RegExp('youtube\.com\/playlist\\?list=', 'i')
-    if (playlistRegex.test(currentUrl)) injectTagBoxToPlaylistItems();
+    if (playlistRegex.test(currentUrl)) delay(3000).then(() => injectTagBoxToPlaylistItems());
     const playlistSongRegex: RegExp = new RegExp('youtube.com/watch\\?v=(.*)\&list=', 'i')
     if (playlistSongRegex.test(currentUrl)) {
         waitForYoutube();
@@ -22,7 +22,7 @@ async function injectTagBoxToSong() {
     const channelNameEl = document.querySelector('yt-formatted-string[class*="ytd-channel-name"] a') as HTMLAnchorElement;
     const songNameEl = document.querySelector("div[id=\"container\"] h1 yt-formatted-string") as HTMLElement
 
-    const tags = await TagService.getTags(userEmail, getSongId(window.location.href), songNameEl.title, getPlaylistId(window.location.href), playlistNameEl.innerText, channelNameEl.innerText )
+    const tags = await TagService.getTags(userEmail, getSongId(window.location.href), songNameEl.innerText, getPlaylistId(window.location.href), playlistNameEl.innerText, channelNameEl.innerText)
     logger.info("Adding tagbox to currently playing song", {
         "User Email": userEmail,
         "Song ID": getSongId(window.location.href),
@@ -67,7 +67,7 @@ function injectTagBoxToPlaylistItems() {
         const songNameEl = metaEl.children[0].children[1] as HTMLAnchorElement
         const playlistNameEl = displayDialogEl.children[1] as HTMLElement;
 
-        const tags = await TagService.getTags(userEmail, getSongId(anchorEl.href), songNameEl.title, getPlaylistId(window.location.href), playlistNameEl.innerText, channelNameEl.innerText)
+        const tags = await TagService.getTags(userEmail, getSongId(anchorEl.href), songNameEl.innerText, getPlaylistId(window.location.href), playlistNameEl.innerText, channelNameEl.innerText)
         logger.info("Adding tagbox to playlist item", {
             "User Email": userEmail,
             "Song ID": getSongId(anchorEl.href),
@@ -77,7 +77,7 @@ function injectTagBoxToPlaylistItems() {
             "Channel Name": channelNameEl.innerText,
             "Tags": tags
         })
-        logger.info(channelNameEl, songNameEl, playlistNameEl)
+        // logger.info(channelNameEl, songNameEl, playlistNameEl)
 
         const tagBoxEl = new TagBox(userEmail, getSongId(anchorEl.href), tags)
         // console.log('This songs parsed url is: ', getSongId(anchorEl.href));

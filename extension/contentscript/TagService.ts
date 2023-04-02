@@ -2,20 +2,21 @@ import { Tag } from './components/TagBox/TagBox'
 import { logger } from './logger'
 
 export class TagService {
-    // static endpoint: string = "https://songtags-production.up.railway.app"
     static endpoint: string = "http://localhost:8000"
 
     static async getEndpoint() {
         const healthUrl = `${TagService.endpoint}/`
         const res: Response = await TagService.get(healthUrl)
         if(res.type == "error") {
-            logger.warn(`Local API not found, using Railway at : https://songtags-production.up.railway.app`)
+            logger.warn(`Local API not found, using Railway at: https://songtags-production.up.railway.app`)
             TagService.endpoint = "https://songtags-production.up.railway.app";
         }
     }
 
     static async getTags(userEmail: string, songId:string, songName:string, playlistId:string, playlistName:string, uploader:string = ""): Promise<Map<string, Tag>> {
-        const url = `${TagService.endpoint}/tags/${userEmail}/${songId}?uploader=${uploader}&song_name=${songName}&playlist_name=${playlistName}&playlist_id=${playlistId}`
+        songName = encodeURIComponent(songName)
+        var url = `${TagService.endpoint}/tags/${userEmail}/${songId}?uploader=${uploader}&song_name=${songName}&playlist_name=${playlistName}&playlist_id=${playlistId}`
+        // url = encodeURI(url) // or else # in songname will break
         return await TagService.get(url).then(res => res.json())
         .then((tagsObj) => {
             const tagsMap: Map<string,Tag> = new Map(Object.entries(tagsObj));
@@ -77,7 +78,7 @@ export class TagService {
             if(!response.ok) throw response
             return response;
         } catch (error) {
-            logger.error(error, `${params.method} request failed!`)
+            logger.warn(error, `${params.method} request failed for ${path}!`)
             return Response.error();
         }
     }

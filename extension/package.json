@@ -11,6 +11,7 @@
     "css-loader": "^6.7.3",
     "file-loader": "^6.2.0",
     "mini-css-extract-plugin": "^2.7.5",
+    "pino": "^8.11.0",
     "sass": "^1.59.3",
     "sass-loader": "^13.2.1",
     "style-loader": "^3.3.2",
@@ -19,15 +20,11 @@
     "webpack-cli": "^5.0.1"
   },
   "scripts": {
-    "setup": "npm run setupbackend && npm run setupfrontend",
-    "setupfrontend": "npm install",
+    "setup": "npm run setupbackend && npm run setupextension",
     "setupbackend": "cd ../backend && python -m venv .venv && .\\.venv\\Scripts\\activate && pip install -r requirements.txt",
+    "setupextension": "npm install",
     "start": "concurrently -t \"yyyy-MM-dd HH:mm\" -n backend,extension -c bgBlue.bold,bgGreen.bold \"npm run backend\" \"npm run watch\"",
     "backend": "cd .. && cd backend && .\\.venv\\Scripts\\activate && uvicorn main:app --reload --port=8000",
-    "watch": "concurrently -n webpack,typecheck -c bgCyan,bgRed \"npx webpack\" \"npx tsc --watch --preserveWatchOutput\"",
-    "startold": "concurrently -t \"yyyy-MM-dd HH:mm\" -n backend,typecheck,webpack -c bgRed.bold,bgCyan.bold,bgBlue.bold \"npm run startbackend\" \"npx tsc --watch --preserveWatchOutput\" \"npx webpack\""
-  },
-  "dependencies": {
-    "pino": "^8.11.0"
+    "watch": "concurrently -n webpack,typecheck -c bgCyan,bgRed \"npx webpack\" \"npx tsc --watch --preserveWatchOutput\""
   }
 }
