@@ -1,10 +1,7 @@
-import os
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 import time
 import sys
-
-import uvicorn
 
 # from routes.tags_router import tags_router
 # from routes.user_router import user_router
@@ -12,16 +9,15 @@ import uvicorn
 # from backend.routes import tags_router
 # from backend.routes import user_router
 
-from routes import user_router
-from routes import tags_router
-
 # import tags_router
 # import user_router
+
+from routes import user_router
+from routes import tags_router
 
 # Without this, we cant use print to print our dicts, it will complain about some
 # UnicodeEncodeError: 'charmap' codec can't encode characters in position 170-171: character maps to <undefined> 
 sys.stdout.reconfigure(encoding='utf-8') 
-
 
 
 # FastAPI app that handles routes for us
@@ -53,7 +49,6 @@ app.add_middleware(
 @app.middleware("http")
 async def add_process_time_header(request: Request, call_next):
     start_time = time.time()
-    # await getUserDict("ajay")
     response = await call_next(request)
     process_time = time.time() - start_time
     response.headers["X-Process-Time"] = str(process_time)
@@ -62,9 +57,4 @@ async def add_process_time_header(request: Request, call_next):
 
 @app.get("/", tags=["health"], status_code=200)
 async def health():
-    return "i am exist"
-    if item_id != "plumbus":
-        raise HTTPException(
-            status_code=403, detail="You can only update the item: plumbus"
-        )
-    return {"item_id": item_id, "name": "The great Plumbus"}
+    return "Success!"

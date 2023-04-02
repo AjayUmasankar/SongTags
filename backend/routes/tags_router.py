@@ -4,23 +4,16 @@ import re
 from fastapi import APIRouter, status, Request
 from fastapi.responses import JSONResponse
 
-from models.tags import TagsToTagInfoDict
-import database.database as db      # from database.database import db
+from models.tags import Tag, TagDict
+import database.database as db     
+
+import json
 
 
 
 # will automatically create keys that dont exist
 def nesteddict():
     return collections.defaultdict(nesteddict)
-
-# Dict1 values take priority and will overrule dic2
-# def merge_dict(dict1, dict2):
-#     result = nesteddict()
-#     for key, value in dict2.items():
-#         result[key] = value 
-#     for key, value in dict1.items():
-#         result[key] = value 
-#     return result
 
 def merge_dict(dict1, dict2):
     for key, value in dict1.items():
@@ -33,36 +26,36 @@ router = APIRouter(
     # responses={404: {"description": "Not found"}},
 )
 
-@router.get("/{username}/{href}", description="Returns a list of tags for the specified song", response_model=TagsToTagInfoDict)
-async def get_tags(username:str, href: str, uploader:str, song_name:str, playlist_name:str):
-    # print("hi")
-    user_document = await db.get_user_document(username)
-    hrefs = user_document.get("hrefs") 
-    tags = nesteddict()
-    if hrefs is None:
-        print("The userDict object has no propery hrefs")
-        return; 
-    # print(tags)
-
-    if href in [*hrefs]:
-        tags = merge_dict(user_document["hrefs"][href], get_automated_tags(uploader, song_name, playlist_name))
-        await db.set_tags(username, href, tags)
-    else:
-        tags = get_automated_tags(uploader, song_name, playlist_name)
-        await db.set_tags(username, href, tags)
-
+@router.get("/{user_email}/{song_id}", description="Returns a list of tags for the specified song", response_model=TagDict)
+async def get_tags(user_email:str, song_id: str, uploader:str, song_name:str, playlist_name:str, playlist_id:str):
+    user = await db.get_user(user_email)
+    song = await db.get_song(song_id, song_name)
+    playlist = await db.get_playlist(playlist_id, playlist_name)
+    tags = await db.get_tags(user_email, song_id)
     return tags
 
 
-@router.post("/{username}/{href}", description="Sets the list of tags for the song", response_description="Tags successfully set")
-async def set_tags(username:str, href: str, request: Request):
-    tags: dict = await request.json() # gets the body
-    await db.set_tags(username, href, tags) # set_tags(username, href, tags)
+
+@router.post("/{user_email}/{song_id}/{tag_name}", description="Creates tag in database, or upserts if it exists", response_model=Tag)
+async def set_tag(user_email:str, song_id: str, tag_name: str):
+    tag = await db.set_tag(user_email, song_id, tag_name)
+    return tag
+
+@router.post("/{username}/{song_id}", description="Sets the list of tags for the song", response_description="Tags successfully set")
+async def set_tags(username:str, song_id: str, request: Request):
+    tagsString: str = await request.json() 
+    tags = json.loads(tagsString)
+    print(tags)
+    for tag_name, tag_info in tags.items():
+        await db.set_tag(username, song_id, tag_name, tag_info)
     return JSONResponse(status_code=status.HTTP_201_CREATED, content=tags)
 
 
-# async def set_tags(username:str, href:str, tags:dict):
-#     await db.set_tags(username, href, tags)
+@router.delete("/{user_email}/{song_id}/{tag_name}", description="Deletes tag in database if it exists")
+async def delete_tag(user_email:str, song_id: str, tag_name: str):
+    tag = await db.delete_tag(user_email, song_id, tag_name)
+    return tag
+
 
 
 

@@ -1,0 +1,70 @@
+// @import  url(https://fonts.googleapis.com/css?family=Montserrat);
+
+$labelPosWithPadding: 5px;
+$height: 14.5px;
+$width: 20px;
+$widthFocused: 80px;
+
+.text-input {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  justify-items: center;
+  align-content: center;
+
+  padding: $labelPosWithPadding $labelPosWithPadding;
+
+
+  input[type="text"]{
+    // display: flex;
+    box-sizing: border-box;
+    height: $height;
+    width: $width;
+    
+    font-family: "Roboto", "Arial", sans-serif;
+    font-size: 12px;
+    font-weight: 400;
+    transition: opacity 0.4s ease-in, width 0.3s ease-in;
+    border: .2px solid #3f3f3f;     // de0505 for brighter red, b42626 for normal red
+    border-radius: 3px 3px 3px 3px;
+    background-color : #0f0f0f;  // 3f3f3f
+    color: #ffffff;
+    opacity:0%;
+  }
+
+  // On focus, how the <input>  will transform 
+  input[type="text"]:focus{
+    width: $widthFocused;
+    opacity:100%;
+    transition: width 0.4s ease-out, opacity .3s linear;
+  }
+  
+  input[type="text"] + .taglabel {
+    display:flex;
+    justify-content:center;
+    position: absolute;
+    bottom: $labelPosWithPadding;
+    line-height: $height;
+    // color: white;
+
+    width: $width;
+    border-radius: 3px 3px 3px 3px;
+    // background-color:#E03616;
+    transition: transform 0.3s ease-in, opacity 0.3s ease-in, width 0.3s ease-in;
+  }
+  
+  // On focus, how the <input> elements lid will transform 
+  input[type="text"]:focus + .taglabel {
+    transition: width 0.4s ease-out, opacity .3s linear;
+    opacity: 0%;
+    width: $widthFocused; // The total width of this element matches the textbox and their width animations also match, making it perfect!
+
+  }
+}
+
+
+
+
+
+// Originally from https://codepen.io/takeradi/pen/mPyYeq

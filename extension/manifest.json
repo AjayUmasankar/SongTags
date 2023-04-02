@@ -1,0 +1,31 @@
+{
+    "name":  "YouTube Tags",
+    "description" : "Add tags to YouTube songs when on the playlist page. ** Unlisted **",
+    "version" : "0.2",
+    "manifest_version" : 3,
+    "permissions": [],
+    "content_scripts": [
+        {
+            "matches": ["https://*.youtube.com/*"],
+            "js": ["./dist/main.js"],
+            "css": ["./dist/main.css"],
+            "run_at": "document_idle"
+        }
+    ],
+    "icons": {
+        "16": "/icons/get_started16.png",
+        "32": "/icons/get_started32.png",
+        "48": "/icons/get_started48.png",
+        "128": "/icons/get_started128.png"
+    },
+    "action" : {
+        "default_popup": "./popup/popup.html",
+        "default_icon": {
+            "16": "/icons/get_started16.png",
+            "32": "/icons/get_started32.png",
+            "48": "/icons/get_started48.png",
+            "128": "/icons/get_started128.png"
+        }
+    },
+    "options_page": "./options/index.html"
+}
