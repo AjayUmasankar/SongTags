@@ -21,7 +21,7 @@ export class TagService {
         return await TagService.get(url).then(res => res.json())
         .then((tagsObj) => {
             const tagsMap: Map<string,Tag> = new Map(Object.entries(tagsObj));
-            logger.info("Recieved tagsObj which was converted into tagsMap", tagsObj, tagsMap)
+            // logger.info("Recieved tagsObj which was converted into tagsMap", tagsObj, tagsMap)
             return tagsMap
         })
     }

@@ -2,7 +2,6 @@ import collections
 import re
 
 from fastapi import APIRouter
-from fastapi.responses import JSONResponse
 
 from models.tags import Tag, TagDict
 import database.database as db     
@@ -16,10 +15,10 @@ def nesteddict():
 router = APIRouter(
     prefix="/tags",
     tags=["tags"],
-    # responses={404: {"description": "Not found"}},
+    responses={404: {"description": "Not found"}},
 )
 
-@router.get("/{user_email}", description="Get all the tags associated with the current user")
+@router.get("/{user_email}", description="Get all tags that match a search term")
 async def get_matching_tags(user_email:str, term:str):
     print(user_email)
     return await db.get_matching_tags(user_email, term)
@@ -27,11 +26,12 @@ async def get_matching_tags(user_email:str, term:str):
 
 @router.get("/{user_email}/{song_id}", description="Returns a list of tags for the specified song", response_model=TagDict)
 async def get_all_song_tags(user_email:str, song_id: str, song_name:str, playlist_id:str,  playlist_name:str, uploader:str):
-    user = await db.get_user(user_email)
-    song = await db.get_song(song_id, song_name)
-    playlist = await db.get_playlist(playlist_id, playlist_name)
+    await db.set_default_user(user_email)
+    await db.set_default_song(song_id, song_name, uploader)
+    await db.set_default_playlist(playlist_id, playlist_name, user_email)
+    await db.set_default_playlist_song(playlist_id, song_id)
     if(re.search("^p[0-9]+", playlist_name, re.IGNORECASE)):
-        await get_automated_tags(user_email, song_id, song_name, playlist_name, uploader)
+        await set_automated_tags(user_email, song_id, song_name, playlist_name, uploader)
 
     tags = await db.get_all_song_tags(user_email, song_id)
     return tags
@@ -58,9 +58,10 @@ async def delete_tag(user_email:str, song_id: str, tag_name: str):
 
 
 
-async def get_automated_tags(user_email: str, song_id: str, song_name:str, playlist_name:str, uploader:str):
+async def set_automated_tags(user_email: str, song_id: str, song_name:str, playlist_name:str, uploader:str):
+
     async def automate_tag(search_string:str, tag_name:str, tag_type:str, tag_pattern:str, case_sensitive:bool, is_artist:bool = False):
-        nonlocal found_artist, automated_tags
+        nonlocal found_artist
         found_artist = is_artist
         flags = re.MULTILINE if case_sensitive else re.IGNORECASE   # the MULTILINE is a placeholder for re.NOFLAG which only exists in python 3.11 :(
 
@@ -70,7 +71,7 @@ async def get_automated_tags(user_email: str, song_id: str, song_name:str, playl
             # automated_tags[tag_name]["type"] = tag_type
 
     async def automate_tag_match(song_name:str, match_group:int, tag_type:str, tag_pattern:str, case_sensitive:bool, is_artist:bool = False):
-        nonlocal found_artist, automated_tags
+        nonlocal found_artist
         found_artist = is_artist
         flags = re.MULTILINE if case_sensitive else re.IGNORECASE
         # print(f"checking {tag_pattern} in {song_name}" )
@@ -79,11 +80,10 @@ async def get_automated_tags(user_email: str, song_id: str, song_name:str, playl
             await db.set_tag(user_email,song_id,result.group(match_group), { "type": tag_type, "priority": 500})
             # automated_tags[result.group(match_group)]["type"] = tag_type
 
-    found_artist = False
-    automated_tags = nesteddict() 
-    automated_tags[playlist_name] = { "type" : "playlist" }
+    await db.set_tag(user_email, song_id, playlist_name, { "type": "playlist", "priority": 100 })
+    # await db.set_tag(user_email,song_id,"Automated", { "type": "metadata", "priority": 500})
 
-    await db.set_tag(user_email,song_id,"Automated", { "type": "metadata", "priority": 500})
+    found_artist = False
     ############## Automations based on Song Name ##############
     # Vocaloids 
     await automate_tag(song_name, "ミク", "vocaloid", "Miku|ミク|レン", False)
@@ -117,25 +117,21 @@ async def get_automated_tags(user_email: str, song_id: str, song_name:str, playl
 
     ############ Automations to find artist ###################
     if found_artist: 
-        return automated_tags
-
+        return
+    
     if re.search(" - Topic", uploader, re.IGNORECASE):
         await db.set_tag(user_email, song_id, uploader.removesuffix(' - Topic'), { "type": "artist", "priority": 500})
-        # automated_tags[uploader.removesuffix(' - Topic')]["type"] = "artist"
 
     if result := re.search("(.*?) Official", uploader, re.IGNORECASE):
         await db.set_tag(user_email, song_id, result.group(1), { "type": "artist", "priority": 500})
-        # automated_tags[result.group(1)]["type"] = "artist"
 
     # uploader name exists in song name
     if re.search(uploader, song_name, re.IGNORECASE):
         await db.set_tag(user_email, song_id, uploader, { "type": "artist", "priority": 500})
-        # automated_tags[uploader]["type"] = "artist"
 
     if result := re.search("(.*?)ちゃんねる", uploader, re.IGNORECASE):
         await db.set_tag(user_email, song_id, result.group(1), { "type": "artist", "priority": 500})
-        # automated_tags[result.group(1)]["type"] = "artist"
-#
+
     # # desperation by removing slash
     # if result := re.search("(.*?) \/", uploader, re.IGNORECASE):
     #     automatedTags[result.group(1)]["type"] = "artist"   
@@ -146,8 +142,5 @@ async def get_automated_tags(user_email: str, song_id: str, song_name:str, playl
     
     # # Add uploader name as a tag
     # tagsToAdd.set(uploader, new TagData("uploader"));
-
-    return automated_tags
-
 
 

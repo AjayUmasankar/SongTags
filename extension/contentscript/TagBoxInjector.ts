@@ -77,10 +77,8 @@ function injectTagBoxToPlaylistItems() {
             "Channel Name": channelNameEl.innerText,
             "Tags": tags
         })
-        // logger.info(channelNameEl, songNameEl, playlistNameEl)
 
         const tagBoxEl = new TagBox(userEmail, getSongId(anchorEl.href), tags)
-        // console.log('This songs parsed url is: ', getSongId(anchorEl.href));
         contentEl.appendChild(tagBoxEl.divEl);
     })
 }
@@ -94,12 +92,12 @@ const waitForYoutube = async (rootElement = document.documentElement) => {
     }
     // First, attach tag box when the element is found
     return new Promise((resolve) => {
-        const observer = new MutationObserver(() => {
+        const observer = new MutationObserver(async () => {
             const element = document.getElementById(selector);
             if (element) {
                 console.log(`${selector} was found!`, new Date().toISOString());
-                injectTagBoxToSong();
-                observer.disconnect();
+                observer.disconnect();                  // this must come first or else we infinite loop since we modify above-the-fold
+                await injectTagBoxToSong();        
                 resolve(element as HTMLDivElement);
             }
         });
@@ -107,10 +105,10 @@ const waitForYoutube = async (rootElement = document.documentElement) => {
     }).then(element => {
     // Secondly, this is for when we go to a new song and the element changes
         selector = 'div#above-the-fold div#title h1' // element that holds title
-        const descriptionChanged = function (mutationsList:any, observer:any) {
+        const descriptionChanged = async function (mutationsList:any, observer:any) {
             console.log(`Changes detected in ${selector}`, new Date().toISOString());
-            deleteTagBoxes();
-            injectTagBoxToSong();
+            await deleteTagBoxes();
+            await injectTagBoxToSong();
         }
         let descriptionObserver = new MutationObserver(descriptionChanged)
         descriptionObserver.observe((element as HTMLDivElement).querySelector(selector), config)
@@ -120,7 +118,7 @@ const waitForYoutube = async (rootElement = document.documentElement) => {
 
 
 
-function deleteTagBoxes() {
+async function deleteTagBoxes() {
     const tagBoxWrappers = document.querySelectorAll('.tagbox') as NodeListOf<Element>;
     for (const element of tagBoxWrappers) {
         element.remove();

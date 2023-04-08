@@ -11,6 +11,6 @@ router = APIRouter(
 )
 
 
-@router.get("/{username}", description="Returns the user and all of their tags", response_model=UserModel)
-async def getUser(username: str):
-    return await db.get_user(username)
+# @router.get("/{username}", description="Returns the user and all of their tags", response_model=UserModel)
+# async def getUser(username: str):
+#     return await db.set_default_user(username)
