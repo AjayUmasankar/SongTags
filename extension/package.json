@@ -24,7 +24,11 @@
     "setupbackend": "cd ../backend && python -m venv .venv && .\\.venv\\Scripts\\activate && pip install -r requirements.txt",
     "setupextension": "npm install",
     "start": "concurrently -t \"yyyy-MM-dd HH:mm\" -n backend,extension -c bgBlue.bold,bgGreen.bold \"npm run backend\" \"npm run watch\"",
-    "backend": "cd .. && cd backend && .\\.venv\\Scripts\\activate && uvicorn main:app --reload --port=8000",
+    "backend": "cd .. && cd backend && .\\.venv\\Scripts\\activate && set PYTHONPATH=backend&& uvicorn main:app --reload --port=8000",
     "watch": "concurrently -n webpack,typecheck -c bgCyan,bgRed \"npx webpack\" \"npx tsc --watch --preserveWatchOutput\""
+  },
+  "comments": {
+    "backend": "the PYTHONPATH isnt needed but it tells main:app where to look for modules.",
+    "backend2": "we shouldnt ever use backend here also, we need to run it from vscodes launch.json debugger config for debugging"
   }
 }

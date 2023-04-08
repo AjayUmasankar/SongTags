@@ -6,7 +6,7 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 module.exports = [
   {
     mode: 'development',                
-    entry: ["./TagBoxInjector.ts", "./components/TagBox/TagBox.css"],   // No longer need to include .css and .scss files here IF we import them in our .ts files as modules (renamed to .module.css or .module.scss)
+    entry: ["./TagBoxInjector.ts", "./components/TagBox/TagBox.css", "../options/js/playlistcreator.js"],   // No longer need to include .css and .scss files here IF we import them in our .ts files as modules (renamed to .module.css or .module.scss)
                                                                         // however, the class names become jibberish and we need to use them properly in our code instead of abusing global scope for css :joy:
     context: path.resolve(__dirname, 'contentscript'),                  // because of this context, our entry files dont need the extra 'contentscript'
     output: {

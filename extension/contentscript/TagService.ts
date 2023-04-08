@@ -11,6 +11,7 @@ export class TagService {
             logger.warn(`Local API not found, using Railway at: https://songtags-production.up.railway.app`)
             TagService.endpoint = "https://songtags-production.up.railway.app";
         }
+        return this.endpoint;
     }
 
     static async getTags(userEmail: string, songId:string, songName:string, playlistId:string, playlistName:string, uploader:string = ""): Promise<Map<string, Tag>> {
@@ -20,7 +21,7 @@ export class TagService {
         return await TagService.get(url).then(res => res.json())
         .then((tagsObj) => {
             const tagsMap: Map<string,Tag> = new Map(Object.entries(tagsObj));
-            // logger.info("Recieved tagsObj which was converted into tagsMap", tagsObj, tagsMap)
+            logger.info("Recieved tagsObj which was converted into tagsMap", tagsObj, tagsMap)
             return tagsMap
         })
     }

@@ -35,8 +35,10 @@ corsOrigins = [
     "http://localhost",
     "http://localhost:8080",
     "http://127.0.0.1:8000",
+    "http://127.0.0.1:5500",
     "https://www.youtube.com",
 ]
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=corsOrigins,
@@ -57,4 +59,5 @@ async def add_process_time_header(request: Request, call_next):
 
 @app.get("/", tags=["health"], status_code=200)
 async def health():
+    print("SUCCESS!")
     return "Success!"

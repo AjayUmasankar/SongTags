@@ -1,13 +1,11 @@
 import collections
 import re
 
-from fastapi import APIRouter, status, Request
+from fastapi import APIRouter
 from fastapi.responses import JSONResponse
 
 from models.tags import Tag, TagDict
 import database.database as db     
-
-import json
 
 
 
@@ -15,38 +13,37 @@ import json
 def nesteddict():
     return collections.defaultdict(nesteddict)
 
-def merge_dict(dict1, dict2):
-    for key, value in dict1.items():
-        dict2[key] = value 
-    return dict2
-
 router = APIRouter(
     prefix="/tags",
     tags=["tags"],
     # responses={404: {"description": "Not found"}},
 )
 
+@router.get("/{user_email}", description="Get all the tags associated with the current user")
+async def get_matching_tags(user_email:str, term:str):
+    print(user_email)
+    return await db.get_matching_tags(user_email, term)
+
+
 @router.get("/{user_email}/{song_id}", description="Returns a list of tags for the specified song", response_model=TagDict)
-async def get_tags(user_email:str, song_id: str, song_name:str, playlist_id:str,  playlist_name:str, uploader:str):
+async def get_all_song_tags(user_email:str, song_id: str, song_name:str, playlist_id:str,  playlist_name:str, uploader:str):
     user = await db.get_user(user_email)
     song = await db.get_song(song_id, song_name)
     playlist = await db.get_playlist(playlist_id, playlist_name)
     if(re.search("^p[0-9]+", playlist_name, re.IGNORECASE)):
         await get_automated_tags(user_email, song_id, song_name, playlist_name, uploader)
 
-    tags = await db.get_tags(user_email, song_id)
+    tags = await db.get_all_song_tags(user_email, song_id)
     return tags
 
-
-
-@router.post("/{username}/{song_id}", description="Sets the list of tags for the song", response_description="Tags successfully set")
-async def set_tags(username:str, song_id: str, request: Request):
-    tagsString: str = await request.json() 
-    tags = json.loads(tagsString)
-    print(tags)
-    for tag_name, tag_info in tags.items():
-        await db.set_tag(username, song_id, tag_name, tag_info)
-    return JSONResponse(status_code=status.HTTP_201_CREATED, content=tags)
+# @router.post("/{username}/{song_id}", description="Sets the list of tags for the song", response_description="Tags successfully set")
+# async def set_tags(username:str, song_id: str, request: Request):
+#     tagsString: str = await request.json() 
+#     tags = json.loads(tagsString)
+#     print(tags)
+#     for tag_name, tag_info in tags.items():
+#         await db.set_tag(username, song_id, tag_name, tag_info)
+#     return JSONResponse(status_code=status.HTTP_201_CREATED, content=tags)
 
 @router.post("/{user_email}/{song_id}/{tag_name}", description="Creates tag in database, or upserts if it exists", response_model=Tag)
 async def set_tag(user_email:str, song_id: str, tag_name: str):
@@ -154,19 +151,3 @@ async def get_automated_tags(user_email: str, song_id: str, song_name:str, playl
 
 
 
-
-
-
-
-
-# @router.put(
-#     "/{item_id}",
-#     tags=["custom"],
-#     responses={403: {"description": "Operation forbidden"}},
-# )
-# async def update_item(item_id: str):
-#     if item_id != "plumbus":
-#         raise HTTPException(
-#             status_code=403, detail="You can only update the item: plumbus"
-#         )
-#     return {"item_id": item_id, "name": "The great Plumbus"}

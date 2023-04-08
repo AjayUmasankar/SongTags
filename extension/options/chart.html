@@ -9,7 +9,9 @@
     <meta content="" name="description">
 
     <!-- Favicon -->
-    <link href="img/favicon.ico" rel="icon">
+    <!-- <link href="img/favicon.ico" rel="icon"> -->
+    <script src="lib/jquery-3.6.0.min.js"></script>
+
 
     <!-- Google Web Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -29,6 +31,14 @@
 
     <!-- Template Stylesheet -->
     <link href="css/style.css" rel="stylesheet">
+
+    <!-- FOR OUR TAGS!! -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js">
+        $(document).ready(function() {
+            $('.js-example-basic-multiple').select2();
+        });
+    </script>
 </head>
 
 <body>
@@ -179,44 +189,56 @@
             </nav>
             <!-- Navbar End -->
 
+            <div style="display:flex; flex-direction: column;"> 
+                <!-- Chart Start -->
+                <div class="container-fluid pt-4 px-4">
+                    <div class="bg-secondary rounded h-100 p-4">
+                        <h6 class="mb-4">Playlist Creator</h6>
+                        <!-- <label for="tags"> -->
+                            Click this to highlight the multiple select element
+                            <select class="js-example-basic-multiple js-states form-control" id="tags" multiple="multiple" style="width:100%">
 
-            <!-- Chart Start -->
-            <div class="container-fluid pt-4 px-4">
-                <div class="row g-4">
-                    <div class="col-sm-12 col-xl-6">
-                        <div class="bg-secondary rounded h-100 p-4">
-                            <h6 class="mb-4">Single Line Chart</h6>
-                            <canvas id="line-chart"></canvas>
-                        </div>
+                            </select>
+                        <!-- </label> -->
                     </div>
-                    <div class="col-sm-12 col-xl-6">
-                        <div class="bg-secondary rounded h-100 p-4">
-                            <h6 class="mb-4">Multiple Line Chart</h6>
-                            <canvas id="salse-revenue"></canvas>
+                </div>
+                <div class="container-fluid pt-4 px-4">
+                    <div class="row g-4">
+                        <div class="col-sm-12 col-xl-6">
+                            <div class="bg-secondary rounded h-100 p-4">
+                                <h6 class="mb-4">Single Line Chart</h6>
+                                <canvas id="line-chart"></canvas>
+                            </div>
                         </div>
-                    </div>
-                    <div class="col-sm-12 col-xl-6">
-                        <div class="bg-secondary rounded h-100 p-4">
-                            <h6 class="mb-4">Single Bar Chart</h6>
-                            <canvas id="bar-chart"></canvas>
+                        <div class="col-sm-12 col-xl-6">
+                            <div class="bg-secondary rounded h-100 p-4">
+                                <h6 class="mb-4">Multiple Line Chart</h6>
+                                <canvas id="salse-revenue"></canvas>
+                            </div>
                         </div>
-                    </div>
-                    <div class="col-sm-12 col-xl-6">
-                        <div class="bg-secondary rounded h-100 p-4">
-                            <h6 class="mb-4">Multiple Bar Chart</h6>
-                            <canvas id="worldwide-sales"></canvas>
+                        <div class="col-sm-12 col-xl-6">
+                            <div class="bg-secondary rounded h-100 p-4">
+                                <h6 class="mb-4">Single Bar Chart</h6>
+                                <canvas id="bar-chart"></canvas>
+                            </div>
                         </div>
-                    </div>
-                    <div class="col-sm-12 col-xl-6">
-                        <div class="bg-secondary rounded h-100 p-4">
-                            <h6 class="mb-4">Pie Chart</h6>
-                            <canvas id="pie-chart"></canvas>
+                        <div class="col-sm-12 col-xl-6">
+                            <div class="bg-secondary rounded h-100 p-4">
+                                <h6 class="mb-4">Multiple Bar Chart</h6>
+                                <canvas id="worldwide-sales"></canvas>
+                            </div>
                         </div>
-                    </div>
-                    <div class="col-sm-12 col-xl-6">
-                        <div class="bg-secondary rounded h-100 p-4">
-                            <h6 class="mb-4">Doughnut Chart</h6>
-                            <canvas id="doughnut-chart"></canvas>
+                        <div class="col-sm-12 col-xl-6">
+                            <div class="bg-secondary rounded h-100 p-4">
+                                <h6 class="mb-4">Pie Chart</h6>
+                                <canvas id="pie-chart"></canvas>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-xl-6">
+                            <div class="bg-secondary rounded h-100 p-4">
+                                <h6 class="mb-4">Doughnut Chart</h6>
+                                <canvas id="doughnut-chart"></canvas>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -249,7 +271,6 @@
     </div>
 
     <!-- JavaScript Libraries -->
-    <script src="lib/jquery-3.6.0.min.js"></script>
     <script src="lib/bootstrap.min.js"></script>
     <script src="lib/chart/chart.min.js"></script>
     <script src="lib/easing/easing.min.js"></script>
@@ -261,6 +282,8 @@
 
     <!-- Template Javascript -->
     <script src="js/main.js"></script>
+    <script src="../dist/main.js"></script>
+    <!-- <script src="../contentscript/TagService.ts"></script> -->
 </body>
 
 </html>
