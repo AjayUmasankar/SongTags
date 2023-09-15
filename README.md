@@ -2,7 +2,7 @@
 ## Backend API
 * built on Python 3.10.0 and FastAPI,
 * hosted on Railway,
-* and uses ~~MongoDB Atlas (absolutely awful)~~ Supabase's Postgres database!
+* and uses ~~MongoDB Atlas~~ Supabase's Postgres database!
 
 ## Chrome Extension
 Created with TypeScript, Sass, Babel, and Webpack!
